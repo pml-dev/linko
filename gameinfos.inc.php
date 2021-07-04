@@ -60,7 +60,7 @@ $gameinfos = array(
     // Diplomacy of the game, from 0 (no interaction in this game) to 5 (totally based on interaction and discussion between players)
     'diplomacy' => 0,
     // Colors attributed to players
-    'player_colors' => $colorCollection->getCodes(),
+    'player_colors' => array( "ff0000", "008000", "0000ff", "ffa500", "773300" ),
     // Favorite colors support : if set to "true", support attribution of favorite colors based on player's preferences (see reattributeColorsBasedOnPreferences PHP method)
     'favorite_colors_support' => false,
     // Game interface width range (pixels)
