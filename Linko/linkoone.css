@@ -1,0 +1,522 @@
+/**
+ *------
+ * BGA framework: © Gregory Isabelli <gisabelli@boardgamearena.com> & Emmanuel Colin <ecolin@boardgamearena.com>
+ * Linkoone implementation : © Geoffrey VOYER <geoffrey.voyer@gmail.com>
+ *
+ * This code has been produced on the BGA studio platform for use on http://boardgamearena.com.
+ * See http://en.boardgamearena.com/#!doc/Studio for more information.
+ * -----
+ *
+ * linkoone.css
+ *
+ * Linkoone stylesheet
+ *
+ */
+
+/*
+    This is the CSS stylesheet of your game User Interface.
+    
+    Styles defined on this file will be applied to the HTML elements you define in your
+    HTML template (linkoone_linkoone.tpl), and to HTML elements you create dynamically
+    (in linkoone.js).
+    
+    Usually, you are using CSS to:
+    
+    1°) define the overall layout of your game
+        (ex: place the board on the top left, place player's hand beside, place the deck on the right, ...).
+
+    2°) create your CSS-sprites:
+        All images of your games should be gathered into a small number of image files. Then, using
+        background-image and background-position CSS properties, you create HTML blocks that can 
+        display these images correctly (see example below).
+    
+    3°) ... anything else:
+        It is really easy to add and remove CSS classes dynamically from your Javascript with
+        dojo.addClass and dojo.removeClass. It is also easy to check if an element has a class
+        (dojo.hasClass) or to get all elements with a specific class (dojo.query). This is why,
+        very often, using CSS classes for the logic of your user interface allow you to do complex
+        thing easily.
+        
+        
+     Note: on the production platform, this file will be compressed and comments will be removed.
+           Consequently, don't hesitate to put as many comments as necessary.
+*/
+
+/* Note: you must not use any @import directive */
+
+/********* You can start writing your CSS below this line: **********/
+
+/*
+    Example of CSS sprites (a black token and a white token, 20x20px each, embedded in the same "tokens.png" 40x20px image):
+
+    .white_token {
+        background-image: url('img/tokens.png');
+        background-position: 0px 0px;
+    }
+    .black_token {
+        background-image: url('img/tokens.png');
+        background-position: -20px 0px;
+    }
+    .token {
+        width: 20px;
+        height: 20px;
+        background-repeat: none;
+    }
+*/
+
+#linkoone_play_zone {
+    position: relative;
+}
+
+#linkoone_zoomable {
+    position: relative;
+}
+
+#lines_fields_wrapper {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    min-height: 500px;
+}
+
+#hand_field_wrapper {
+    position: absolute;
+    overflow: hidden;
+    width: 100%;
+    min-height: 177px;
+}
+
+#zoomin_left, #zoomout_left, #zoomin_right, #zoomout_right {
+    position: absolute;
+    background: url('img/zoom.png');
+    background-size: 200% auto;
+    background-repeat: no-repeat;
+    width: 24px;
+    height: 24px;
+    z-index: 111;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 0px 0px 4px 3px rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+}
+
+#zoomin_left {
+    background-position: 0%, 100%;
+    left: 4px;
+    top: 4px;
+}
+#zoomout_left {
+    background-position: 100%, 100%;
+    left: 4px;
+    top: 36px;
+}
+
+#zoomin_right {
+    background-position: 0%, 100%;
+    right: 4px;
+    top: 4px;
+}
+#zoomout_right {
+    background-position: 100%, 100%;
+    right: 4px;
+    top: 36px;
+}
+
+.stockitem {
+    background-size: 1462px 960px;
+    box-shadow: 1px 2px 1px 1px rgba(0,0,0,0.44);
+    border-radius: 5px;
+}
+
+.block_title {
+    background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.75));
+    border-radius: 10px;
+    display: inline-block;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-top: 0px;
+}
+
+.bird_type_0 {
+    color: #ee7a9d;
+}
+
+.bird_type_1 {
+    color: #f4991d;
+    background-position: -25px;
+}
+
+.bird_type_2 {
+    color: #303233;
+    background-position: -50px;
+}
+
+.bird_type_3 {
+    color: #008486;
+    background-position: -75px;
+}
+
+.bird_type_4 {
+    color: #d33216;
+    background-position: -100px;
+}
+
+.bird_type_5 {
+    color: #11428a;
+    background-position: -125px;
+}
+
+.bird_type_6 {
+    color: #69604a;
+    background-position: -150px;
+}
+
+.bird_type_7 {
+    color: #eb6e21;
+    background-position: -175px;
+}
+
+.won_card_container {
+    margin-top: 5px;
+}
+
+.hand_card_container {
+    float: left;
+    width: 37px;
+    height: 52px;
+    background-size: 37px 52px;
+    background-image: url('img/linkoone_cards_back.jpg');
+    box-shadow: 1px 2px 1px 1px rgba(0, 0, 0, 0.44);
+    border-radius: 5px;
+    margin-top: 5px;
+    position: relative;
+}
+
+.hand_card_number {
+    position: absolute;
+    width: 100%;
+    bottom: 0px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 19px;
+    color: white;
+    text-shadow: 3px 0 3px #d68910, 0 -3px 3px #d68910, 0 3px 3px #d68910, -3px 0 3px #d68910;
+}
+
+#linkoone_below {
+    position: relative;
+    width: 100%;
+    text-align: center;
+}
+
+/* Warning, margin-left carefully chosen based on the cards length. */
+
+.bird_type {
+    position: relative;
+    height: 25px;
+    width: 25px;
+    background-size: 200px 25px;
+    background-image: url("img/icons.png");
+    border-radius: 50%;
+    display: inline-block;
+    vertical-align: middle;
+    border: 2px solid;
+    margin-bottom: 3px;
+}
+
+.bird_score {
+    font-weight: bold;
+    transition: color 1500ms;
+}
+
+.bird_score_highlight {
+    color: red;
+}
+
+.tooltipCard {
+    position: relative;
+    width: 229px;
+    height: 320px;
+    background-image: url('img/linkoone_cards.jpg');
+    border-radius: 10px;
+}
+
+.won_cards_type_container {
+    display: inline-block;
+    margin-left: 5px;
+}
+
+#myhand_wrap {
+    position: relative;
+    width: calc(100% - 280px);
+    display: inline-block;
+    vertical-align: top;
+    margin: 0;
+    min-height: 120px;
+}
+
+#myhand {
+    margin-top: 10px;
+}
+
+.played_cards_row {
+    width: calc(100% - 280px);
+    vertical-align: top;
+    margin-left: 129px;
+    background-image: none;
+}
+
+.wire_spread {
+    position: absolute;
+    height: 10px;
+    left: -10000px;
+    right: -10000px;
+    background-image: url("img/wire.png");
+    background-size: auto 10px;
+    background-repeat: repeat-x;
+}
+
+#wire_spread_line_0 { top: 89px; }
+#wire_spread_line_1 { top: 218px; }
+#wire_spread_line_2 { top: 349px; }
+#wire_spread_line_3 { top: 479px; }
+#wire_spread_hand { top: 124px; left: 0px; right: 0px; }
+
+
+#linkoone_lines {
+    position: relative;
+    min-height: 528px;
+}
+
+.table_cards_line {
+    position: absolute;
+    left: -1000px;
+    right: -1000px;
+}
+
+#table_cards_line_0 { top: 5px; }
+#table_cards_line_1 { top: 135px; }
+#table_cards_line_2 { top: 265px; }
+#table_cards_line_3 { top: 395px; } 
+
+
+
+/* Deck */
+
+#deck_container, #discard_container {
+    width: 100px;
+    text-align: center;
+    display: inline-block;
+    vertical-align: top;
+}
+
+#deck_container {
+    margin: 0px 5px 0px 0px;
+}
+
+#discard_container {
+    margin: 0px 0px 0px 5px;
+}
+
+#deck {
+    width: 86px;
+    height: 120px;
+    position: relative;
+    display: inline-block;
+    
+    background-image: url('img/linkoone_cards_back.jpg');
+    background-size: 86px 120px;
+    
+    box-shadow: 1px 2px 1px 1px rgba(0,0,0,0.44);
+    border-radius: 5px;
+
+    margin-top: 10px;
+    margin-bottom: 5px;
+    z-index: 1;
+}
+
+#discard {
+    margin-top: 10px;
+}
+
+#discard .stockitem {
+    box-shadow: 0px 0px 0px 0px rgba(0,0,0,0.44);
+}
+
+#discard_under {
+    position: absolute;
+    top: 0px;
+    left: 2.5px;
+    
+    width: 86px;
+    height: 120px;
+    
+    background-image: url('img/linkoone_cards_back.jpg');
+    background-size: 86px 120px;
+    
+    box-shadow: 1px 2px 1px 1px rgba(0,0,0,0.44);
+    border-radius: 5px;
+}
+
+#deck_counter, #discard_counter {
+    position: absolute;
+    bottom: 5px;
+    width: 100%;
+    text-align: center;
+    font-weight: bold;
+    font-size: 24px;
+    color: white;
+    text-shadow: 3px 0 3px #d68910, 0 -3px 3px #d68910, 0 3px 3px #d68910, -3px 0 3px #d68910;
+}
+
+#discard_counter {
+    z-index: 111;
+}
+
+.drawn_card {
+    width: 86px;
+    height: 120px;
+    position: absolute;
+    
+    background-image: url('img/linkoone_cards_back.jpg');
+    background-size: 86px 120px;
+    
+    box-shadow: 1px 2px 1px 1px rgba(0,0,0,0.44);
+    border-radius: 5px;
+    
+    z-index: 1;
+}
+
+/* Logs */
+
+.bird_logs_display {
+    font-weight: bold;
+}
+
+.bird_logs_icon {
+	width: 25px;
+	height: 25px;
+	background-size: 200px 25px;
+    background-image: url("img/icons.png");
+    border-radius: 50%;
+    display: inline-block;
+    vertical-align: middle;
+    border: 2px solid;
+    margin-bottom: 3px;
+}
+
+/* Side spaces to lay cards */
+
+.line_side_space {
+    border: 2px dashed darkred;
+    box-shadow: 0px 0px 0px grey;
+    cursor: pointer;
+}
+
+.line_side_space_hidden {
+    border: 0px dashed darkred;
+    box-shadow: 0px 0px 0px grey;
+    cursor: auto;
+}
+
+.sky_left {
+    position: absolute;
+    width: 90px;
+    height: 90px;
+    right: 0px;
+    bottom: 10px;
+    background-image: url("img/sky-left.png");
+    background-size: auto 90px;
+    background-repeat: no-repeat;
+    z-index: -1;
+}
+
+.sky_right {
+    position: absolute;
+    width: 90px;
+    height: 90px;
+    left: 0px;
+    bottom: 10px;
+    background-image: url("img/sky-right.png");
+    background-size: auto 90px;
+    background-repeat: no-repeat;
+    z-index: -1;
+}
+
+.sky_center {
+    position: absolute;
+    width: 10px;
+    height: 90px;
+    left: 100%;
+    bottom: 10px;
+    background-image: url("img/sky-center.png");
+    background-size: auto 90px;
+    background-repeat: repeat;
+    z-index: -1;
+}
+
+.sky_center_ext_right {
+    left: -10px;
+}
+
+.wire_left {
+    position: absolute;
+    width: 69px;
+    height: 10px;
+    right: 0px;
+    bottom: 27.5px;
+    background-image: url("img/wire-left.png");
+    background-size: auto 10px;
+    background-repeat: no-repeat;
+    z-index: -1;
+}
+
+.wire_right {
+    position: absolute;
+    width: 90px;
+    height: 10px;
+    left: 0px;
+    bottom: 27.5px;
+    background-image: url("img/wire-right.png");
+    background-size: auto 10px;
+    background-repeat: no-repeat;
+    z-index: -1;
+}
+
+.wire_center {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    left: 100%;
+    bottom: 27.5px;
+    background-image: url("img/wire-center.png");
+    background-size: auto 10px;
+    background-repeat: repeat;
+    z-index: -1;
+}
+
+.wire_center_ext_right {
+    left: -10px;
+}
+
+.line_card {
+    cursor: auto ! important;
+}
+
+/* Hand */
+
+#myhand .stockitem {
+    transition: transform .2s ease-in-out;
+    z-index: 1;
+}
+
+#myhand .stockitem:hover {
+    z-index: 2;
+    transform: scale(1.2);
+}
+
+.stockitem_selected {
+	border: 0px solid red ! important;
+    box-shadow: 0 0 0 3px red ! important;
+}
