@@ -63,6 +63,17 @@
         background-repeat: none;
     }
 */
+/*
+#playertables {
+    position: relative;
+    width: 550px;
+    height: 340px;
+}
+#carddraw{
+    position: relative;
+    width: 170px;
+    
+}
 .playertablecard {
     display: inline-block;
     position: relative;

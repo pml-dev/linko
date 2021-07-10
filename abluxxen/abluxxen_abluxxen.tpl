@@ -25,19 +25,32 @@
     Please REMOVE this comment before publishing your game on BGA
 -->
 
+<div id="gamepanel">
+    <div class="container">
+        <div id="carddeck" >
+            <div class="whiteblock">
+                DECK
+            </div>
+        </div>
+        <div id="playertables">
+            <!-- BEGIN player -->
+            <div class="playertable whiteblock playertable_{DIR}">
+                <div class="playertablename" style="color:#{PLAYER_COLOR}">
+                    {PLAYER_NAME}
+                </div>
+                <div class="playertablecard" id="playertablecard_{PLAYER_ID}">
+                </div>
+            </div>
+            <!-- END player -->
+        </div>
+    </div>
+    <div class="clear"></div>
+</div>
 
-This is your game interface. You can edit this HTML in your ".tpl" file.
+
 
 
 <script type="text/javascript">
-
-// Javascript HTML templates
-
-/*
-// Example:
-var jstpl_some_game_item='<div class="my_game_item" id="my_game_item_${MY_ITEM_ID}"></div>';
-
-*/
 
 </script>  
 

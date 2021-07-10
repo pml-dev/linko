@@ -66,14 +66,63 @@
         background-repeat: none;
     }
 */
-.playertablecard {
+/*
+#linkogame{
+    position: relative;
+    
+}
+
+#playertables,#carddraw{
+    float: left;
+}
+.clear{
+    clear: both;
+}
+#playertables {
+    position: relative;
+    height: 340px;
+    width: 85%;
+}
+#carddraw{
+    width: 15%;
+    
+}
+.playertablecard,drawablecard{
     display: inline-block;
     position: relative;
     margin-top: 5px;
     width: 147px;
     height: 182px;
-    background-image: url('img/cards.png'); /* temp hack to see it */
+    background-image: url('img/cards.png'); /* temp hack to see it 
 }
+*/
 
-
-
+.container{
+    width: 100%;
+}
+#carddeck,#playertables{
+    float: left;
+}
+#carddeck{
+    width: 13%;
+    margin-right: 2%;
+    height: 340px;
+}
+#playertables{
+    width: 85%;
+    min-height: 340px;
+}
+.playertable{
+    font-weight: bold;
+}
+.clear{
+    clear: both;
+}
+.playertablecard,drawablecard{
+    display: inline-block;
+    position: relative;
+    margin-top: 5px;
+    width: 147px;
+    height: 182px;
+    background-image: url('img/cards.png'); /* temp hack to see it*/
+}

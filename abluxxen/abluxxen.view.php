@@ -38,7 +38,21 @@
         $players_nbr = count( $players );
 
         /*********** Place your code below:  ************/
-
+        $template = self::getGameName() . "_" . self::getGameName();
+        
+        $positons = array( 'One', 'Two', 'Three', 'Foor' );
+        
+        // this will inflate our player block with actual players data
+        $this->page->begin_block($template, "player");
+        foreach ( $players as $player_id => $info ) {
+            $pos = array_shift($positons);
+            $this->page->insert_block("player", array ("PLAYER_ID" => $player_id,
+                    "PLAYER_NAME" => $players [$player_id] ['player_name'],
+                    "PLAYER_COLOR" => $players [$player_id] ['player_color'],
+                    "NUMBER" => $pos ));
+        }
+        // this will make our My Hand text translatable
+        $this->tpl['MY_HAND'] = self::_("My hand");
 
         /*
         
