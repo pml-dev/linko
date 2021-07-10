@@ -45,6 +45,11 @@
         </div>
     </div>
     <div class="clear"></div>
+    <div id="myhand_wrap" class="whiteblock">
+        <h3>{MY_HAND}</h3>
+        <div id="myhand">
+        </div>
+    </div>
 </div>
 
 

@@ -18,7 +18,8 @@
 define([
     "dojo","dojo/_base/declare",
     "ebg/core/gamegui",
-    "ebg/counter"
+    "ebg/counter",
+    "ebg/stock"
 ],
 function (dojo, declare) {
     return declare("bgagame.abluxxen", ebg.core.gamegui, {
@@ -28,6 +29,12 @@ function (dojo, declare) {
             // Here, you can init the global variables of your user interface
             // Example:
             // this.myGlobalValue = 0;
+            this.cardwidth = 147;
+            this.cardheight = 182;
+            
+            this.numberOfJockers = 5;
+            this.numberOfNumbers = 8;
+            this.numberOfDifferent = 14;
 
         },
         
@@ -57,8 +64,24 @@ function (dojo, declare) {
             }
             
             // TODO: Set up your game interface here, according to "gamedatas"
+            // Player hand
+            this.playerHand = new ebg.stock(); // new stock object for hand
+            this.playerHand.create( this, $('myhand'), this.cardwidth, this.cardheight );
             
- 
+            this.playerHand.image_items_per_row = this.numberOfNumbers; // 13 images per row
+
+
+            // Create cards types:
+            for (var number = 1; number <= 4; number++) {
+                for (var col = 2; col <= 14; col++) {
+                    // Build card type id
+                    var card_type_id = this.getCardUniqueId(number, col);
+                    this.playerHand.addItemType(card_type_id, card_type_id, g_gamethemeurl + 'img/cards.png', card_type_id);
+                }
+            }
+            
+            this.playerHand.addToStockWithId( this.getCardUniqueId( 1, 5 ), 17 );
+            this.playerHand.addToStockWithId( this.getCardUniqueId( 1, 6 ), 18 );
             // Setup game notifications to handle (see "setupNotifications" method below)
             this.setupNotifications();
 
@@ -157,7 +180,9 @@ function (dojo, declare) {
             script.
         
         */
-
+       getCardUniqueId : function(number, cols) {
+            return (number)*this.numberOfDifferent + (cols)-1;
+        },
 
         ///////////////////////////////////////////////////
         //// Player's action
