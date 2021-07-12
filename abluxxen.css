@@ -106,7 +106,7 @@
 #carddeck{
     width: 13%;
     margin-right: 2%;
-    height: 340px;
+    min-height: 340px;
 }
 #playertables{
     width: 85%;
@@ -122,7 +122,7 @@
     display: inline-block;
     position: relative;
     margin-top: 5px;
-    width: 147px;
-    height: 182px;
+    width: 87px;
+    height: 134px;
     background-image: url('img/cards.png'); /* temp hack to see it*/
 }
