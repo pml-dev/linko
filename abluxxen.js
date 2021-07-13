@@ -33,6 +33,7 @@ define([
                     this.cardheight = 134;
 
                     this.numberOfNumbers = 8;
+                    this.numberOfJokers = 5;
 
                 },
 
@@ -66,7 +67,7 @@ define([
                     this.playerHand = new ebg.stock(); // new stock object for hand
                     this.playerHand.create(this, $('myhand'), this.cardwidth, this.cardheight);
 
-                    this.playerHand.image_items_per_row = 8;//this.numberOfNumbers; // 13 images per row
+                    this.playerHand.image_items_per_row = this.numberOfNumbers;  
 
 
                     // Create cards types:
@@ -78,12 +79,21 @@ define([
                             //console.log(card_type_id + " - (" + number + " | " + col + ")");
                         }
                     }
+                    for (var jok = 1; jok <= this.numberOfJokers; jok++) {
+                        var card_type_id = this.getCardUniqueId(14, jok);
+                        this.playerHand.addItemType(card_type_id, card_type_id, g_gamethemeurl + 'img/cards.png', card_type_id);
+                    }
+                    
+                    
+                    
                     this.playerHand.addToStockWithId(this.getCardUniqueId(1, 1), 0);
                     this.playerHand.addToStockWithId(this.getCardUniqueId(1, 2), 1);
                     this.playerHand.addToStockWithId(this.getCardUniqueId(1, 8), 7);
                     
                     this.playerHand.addToStockWithId(this.getCardUniqueId(2, 1),8);
                     this.playerHand.addToStockWithId(this.getCardUniqueId(2, 2),9);
+                    
+                    this.playerHand.addToStockWithId(this.getCardUniqueId(14, 2),30);
 //
 //                    this.playerHand.addToStockWithId(this.getCardUniqueId(2, 3), 29);
 //                    this.playerHand.addToStockWithId(this.getCardUniqueId(3, 2), 16);
@@ -97,6 +107,9 @@ define([
 //                    this.playerHand.addToStockWithId(this.getCardUniqueId(1, 2), 15); // A ??? B : Position colone
 //                    this.playerHand.addToStockWithId(this.getCardUniqueId(2, 2), 16); // A ??? B : Position colone
                     // Setup game notifications to handle (see "setupNotifications" method below)
+                    
+                    dojo.connect( this.playerHand, 'onChangeSelection', this, 'onPlayerHandSelectionChanged' );
+                    
                     this.setupNotifications();
 
                     console.log("Ending game setup");
@@ -200,7 +213,24 @@ define([
 
                 ///////////////////////////////////////////////////
                 //// Player's action
+                onPlayerHandSelectionChanged : function() {
+                    var items = this.playerHand.getSelectedItems();
 
+                    if (items.length > 0) {
+                        if (this.checkAction('playCard', true)) {
+                            // Can play a card
+
+                            var card_id = items[0].id;
+                            console.log("on playCard "+card_id);
+
+                            this.playerHand.unselectAll();
+                        } else if (this.checkAction('giveCards')) {
+                            // Can give cards => let the player select some cards
+                        } else {
+                            this.playerHand.unselectAll();
+                        }
+                    }
+                },
                 /*
                  
                  Here, you are defining methods to handle player's action (ex: results of mouse click on 
