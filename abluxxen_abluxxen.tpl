@@ -56,7 +56,8 @@
 
 
 <script type="text/javascript">
-
+    var jstpl_cardontable = '<div class="cardontable" id="cardontable_${player_id}" style="background-position:-${x}px -${y}px">\
+                        </div>';
 </script>  
 
 {OVERALL_GAME_FOOTER}
