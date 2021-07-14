@@ -124,10 +124,5 @@
     margin-top: 5px;
     width: 87px;
     height: 134px;
-    /* background-image: url('img/cards.png'); /* temp hack to see it*/
-}
-.cardontable {
-    width: 87px;
-    height: 134px;
-    background-image: url('img/cards.png'); 
+    background-image: url('img/cards.png'); /* temp hack to see it*/
 }

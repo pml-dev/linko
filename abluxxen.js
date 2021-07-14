@@ -67,7 +67,7 @@ define([
                     this.playerHand = new ebg.stock(); // new stock object for hand
                     this.playerHand.create(this, $('myhand'), this.cardwidth, this.cardheight);
 
-                    this.playerHand.image_items_per_row = this.numberOfNumbers;
+                    this.playerHand.image_items_per_row = this.numberOfNumbers;  
 
 
                     // Create cards types:
@@ -83,43 +83,17 @@ define([
                         var card_type_id = this.getCardUniqueId(14, jok);
                         this.playerHand.addItemType(card_type_id, card_type_id, g_gamethemeurl + 'img/cards.png', card_type_id);
                     }
-
-                    // Cards in player's hand
-                    for ( var i in this.gamedatas.hand) {
-                        var card = this.gamedatas.hand[i];
-                        
-                        var number = card.type;
-                        //var value = card.type_arg;
-                        
-                        //this.playerHand.addToStockWithId(this.getCardUniqueId(number, value), card.id);
-                        //console.log(card);
-                        this.playerHand.addToStockWithId(this.getCardUniqueId(number, 1), card.id);
-                    }
                     
-                    for (i in this.gamedatas.cardsontable) {
-                        var card = this.gamedatas.cardsontable[i];
-                        var number = card.type;
-                        //var value = card.type_arg;
-                        var player_id = card.location_arg;
-                        this.playCardOnTable(player_id, card.id);
-                    }
-
-                    // Cards in player's hand
-//                    for (var i in this.gamedatas.hand) {
-//                        var card = this.gamedatas.hand[i];
-//                        var color = card.type;
-//                        var value = card.type_arg;
-//                        this.playerHand.addToStockWithId(this.getCardUniqueId(color, value), card.id);
-//                    }
-//
-//                    // Cards played on table
-//                    for (i in this.gamedatas.cardsontable) {
-//                        var card = this.gamedatas.cardsontable[i];
-//                        var number = card.type;
-//                        var value = card.type_arg;
-//                        var player_id = card.location_arg;
-//                        this.playCardOnTable(player_id, number, value, card.id);
-//                    }
+                    
+                    
+                    this.playerHand.addToStockWithId(this.getCardUniqueId(1, 1), 0);
+                    this.playerHand.addToStockWithId(this.getCardUniqueId(1, 2), 1);
+                    this.playerHand.addToStockWithId(this.getCardUniqueId(1, 8), 7);
+                    
+                    this.playerHand.addToStockWithId(this.getCardUniqueId(2, 1),8);
+                    this.playerHand.addToStockWithId(this.getCardUniqueId(2, 2),9);
+                    
+                    this.playerHand.addToStockWithId(this.getCardUniqueId(14, 2),30);
 //
 //                    this.playerHand.addToStockWithId(this.getCardUniqueId(2, 3), 29);
 //                    this.playerHand.addToStockWithId(this.getCardUniqueId(3, 2), 16);
@@ -133,9 +107,9 @@ define([
 //                    this.playerHand.addToStockWithId(this.getCardUniqueId(1, 2), 15); // A ??? B : Position colone
 //                    this.playerHand.addToStockWithId(this.getCardUniqueId(2, 2), 16); // A ??? B : Position colone
                     // Setup game notifications to handle (see "setupNotifications" method below)
-
-                    dojo.connect(this.playerHand, 'onChangeSelection', this, 'onPlayerHandSelectionChanged');
-
+                    
+                    dojo.connect( this.playerHand, 'onChangeSelection', this, 'onPlayerHandSelectionChanged' );
+                    
                     this.setupNotifications();
 
                     console.log("Ending game setup");
@@ -233,41 +207,13 @@ define([
                  
                  */
                 getCardUniqueId: function (number, cols) {
-                    return (number - 1) * 8 + cols - 1;
+                    return (number-1) * 8+ cols - 1;
                     //return (color - 1) * 13 + (value - 2);
-                },
-
-                playCardOnTable: function (player_id, number, card_id) {
-                    // player_id => direction
-                    //console.log(number+" - "+value);
-                    
-                    dojo.place(this.format_block('jstpl_cardontable', {
-                        x: this.cardwidth,
-                        y: this.cardheight * (number),
-                        player_id: player_id
-                    }), 'playertablecard_' + player_id);
-
-                    if (player_id !== this.player_id) {
-                        // Some opponent played a card
-                        // Move card from player panel
-                        this.placeOnObject('cardontable_' + player_id, 'overall_player_board_' + player_id);
-                    } else {
-                        // You played a card. If it exists in your hand, move card from there and remove
-                        // corresponding item
-
-                        if ($('myhand_item_' + card_id)) {
-                            this.placeOnObject('cardontable_' + player_id, 'myhand_item_' + card_id);
-                            this.playerHand.removeFromStockById(card_id);
-                        }
-                    }
-
-                    // In any case: move it to its final destination
-                    this.slideToObject('cardontable_' + player_id, 'playertablecard_' + player_id).play();
                 },
 
                 ///////////////////////////////////////////////////
                 //// Player's action
-                onPlayerHandSelectionChanged: function () {
+                onPlayerHandSelectionChanged : function() {
                     var items = this.playerHand.getSelectedItems();
 
                     if (items.length > 0) {
@@ -275,15 +221,7 @@ define([
                             // Can play a card
 
                             var card_id = items[0].id;
-                            console.log("on playCard " + card_id);
-                            // type is (color - 1) * 13 + (value - 2)
-                            console.log(items[0]);
-                            
-                            var type = items[0].type;
-                            var number = Math.floor(type / 8);
-                            //var value = type % 8 + 1;
-
-                            this.playCardOnTable(this.player_id, number, card_id);
+                            console.log("on playCard "+card_id);
 
                             this.playerHand.unselectAll();
                         } else if (this.checkAction('giveCards')) {

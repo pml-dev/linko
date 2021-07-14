@@ -90,17 +90,17 @@ class abluxxen extends Table {
             $cards[] = array('type' => $number, 'type_arg' => $number, 'nbr' => 8);
         }
         $cards[] = array('type' => 14, 'type_arg' => 'X', 'nbr' => 5);
+        
+        $this->cards->createCards( $cards, 'deck' );
+
+//        foreach ( $this->number as $number_id => $number ) {
+//            for ($value = 1; $value <= 13; $value ++) {
+//                $cards [] = array ('type' => $number_id,'type_arg' => $value,'nbr' => 8 ); 
+//            }
+//        }
+
 
         $this->cards->createCards($cards, 'deck');
-
-        // Shuffle deck
-        $this->cards->shuffle('deck');
-        // Deal 13 cards to each players
-        $players = self::loadPlayersBasicInfos();
-        foreach ($players as $player_id => $player) {
-            $cards = $this->cards->pickCards(13, 'deck', $player_id);
-        }
-        
 
         // Activate first player (which is in general a good idea :) )
         $this->activeNextPlayer();
@@ -128,15 +128,6 @@ class abluxxen extends Table {
         $result['players'] = self::getCollectionFromDb($sql);
 
         // TODO: Gather all information about current game situation (visible by player $current_player_id).
-        // Cards in player hand
-        $result['hand'] = $this->cards->getCardsInLocation('hand', $current_player_id);
-//        echo"<pre>";
-//        var_dump($result['hand']);
-//         echo"</pre>";
-//        ;die;
-
-        // Cards played on the table
-        $result['cardsontable'] = $this->cards->getCardsInLocation('cardsontable');
 
         return $result;
     }
