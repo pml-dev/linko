@@ -61,27 +61,17 @@ define([
                     // Cards in player's hand 
                     this.debug("gamedatas", this.gamedatas);
                     this.recreateHandFromData(this.gamedatas.hand);
-                    // 
-//                    this.debug("gamedatas", this.gamedatas);
-//                    for (var i in this.gamedatas.hand) {
-//                        var card = this.gamedatas.hand[i];
-//
-//                        var value = card.type;
-//                        //var value = card.type_arg;
-//                        this.debug(value);
-//                        this.debug(card);
-//                        this.debug("__________");
-//                        //console.log(this.getCardUniqueId(value, 1))
-//                        this.playerHand.addToStockWithId(value , card.id);
-//                    }
 
-//                    // Cards played on table
-//                    for (i in this.gamedatas.cardsontable) {
-//                        var card = this.gamedatas.cardsontable[i];
-//                        var value = card.type;
-//                        var player_id = card.location_arg;
-//                        this.playCardOnTable(player_id, value, card.id);
-//                    }
+                    // Aviable cards in draw
+                    var drawData = this.gamedatas.drawable;
+
+                    this.drawableCard = this.createStockForCards(this, $('aviableDraw'));
+                    for (var i in drawData) {
+                        var card = drawData[i];
+                        this.debug("card", card);
+                        this.drawableCard.addToStockWithId(card.type, card.id);
+                    }
+
 
 
                     dojo.connect(this.playerHand, 'onChangeSelection', this, 'onPlayerHandSelectionChanged');

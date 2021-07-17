@@ -30,6 +30,8 @@
         <div id="carddeck" >
             <div class="whiteblock">
                 DECK
+                <div id="aviableDraw">
+                </div>
             </div>
         </div>
         <div id="playertables">
