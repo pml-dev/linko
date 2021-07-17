@@ -124,5 +124,14 @@
     margin-top: 5px;
     width: 87px;
     height: 134px;
-    background-image: url('img/cards.png'); /* temp hack to see it*/
+   /*background-image: url('img/cards.png'); /* temp hack to see it*/
+}
+
+/*** cards on table ***/
+
+.cardontable {
+    position: absolute;
+    width: 87px;
+    height: 134px;
+    background-image: url('img/cards.png'); 
 }

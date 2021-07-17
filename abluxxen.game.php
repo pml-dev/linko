@@ -21,6 +21,11 @@ require_once( APP_GAMEMODULE_PATH . 'module/table/table.game.php' );
 class abluxxen extends Table {
 
     CONST TRICK_NUMBER = 10;
+    CONST AVAILABLE_CARD = 6;
+    CONST TYPES_OF_NUMBERS = 13;
+    CONST NUMBER_OF_NUMBERS = 8;
+    CONST VALUE_OF_JOKERS = 14;
+    CONST NUMBER_OF_JOKERS = 5;
 
     function __construct() {
         // Your global variables labels:
@@ -73,34 +78,28 @@ class abluxxen extends Table {
         self::reloadPlayersBasicInfos();
 
         /*         * ********** Start the game initialization **** */
-
-        // Init global values with their initial values
-        //self::setGameStateInitialValue( 'my_first_global_variable', 0 );
-        // Init game statistics
-        // (note: statistics used in this file must be defined in your stats.inc.php file)
-        //self::initStat( 'table', 'table_teststat1', 0 );    // Init a table statistics
-        //self::initStat( 'player', 'player_teststat1', 0 );  // Init a player statistics (for all players)
-        // TODO: setup the initial game situation here
-        // Set current trick number to zero (= no trick number)
-        self::setGameStateInitialValue('trickNumber', 0);
-
         // Create cards
         $cards = array();
-        for ($number = 1; $number <= 13; $number++) {
-            $cards[] = array('type' => $number, 'type_arg' => $number, 'nbr' => 8);
+        for ($number = 1; $number <= self::NUMBER_OF_NUMBERS; ++$number) {
+            $cards[] = array('type' => $number, 'type_arg' => $number + 1, 'nbr' => self::NUMBER_OF_NUMBERS);
         }
-        $cards[] = array('type' => 14, 'type_arg' => 'X', 'nbr' => 5);
-        
-        $this->cards->createCards( $cards, 'deck' );
-
-//        foreach ( $this->number as $number_id => $number ) {
-//            for ($value = 1; $value <= 13; $value ++) {
-//                $cards [] = array ('type' => $number_id,'type_arg' => $value,'nbr' => 8 ); 
-//            }
-//        }
-
+        $cards[] = array('type' => self::VALUE_OF_JOKERS, 'type_arg' => self::VALUE_OF_JOKERS, 'nbr' => self::NUMBER_OF_JOKERS);
 
         $this->cards->createCards($cards, 'deck');
+
+        $this->cards->moveAllCardsInLocation(null, "deck");
+        $this->cards->shuffle('deck');
+        // Deal 13 cards to each players
+        // Create deck, shuffle it and give 13 initial cards
+//        $players = self::loadPlayersBasicInfos();
+        foreach ($players as $player_id => $player) {
+            $cards = $this->cards->pickCards(13, 'deck', $player_id);
+            // Notify player about his cards
+            self::notifyPlayer($player_id, 'newHand', '', array('cards' => $cards));
+        }
+
+        //Define drawable card
+        $this->cards->pickCardsForLocation(self::AVAILABLE_CARD, 'deck', 'draw');
 
         // Activate first player (which is in general a good idea :) )
         $this->activeNextPlayer();
@@ -129,10 +128,13 @@ class abluxxen extends Table {
 
         // TODO: Gather all information about current game situation (visible by player $current_player_id).
         // Cards in player hand
-        $result['hand'] = $this->cards->getCardsInLocation( 'hand', $current_player_id );
-        
+        $result['hand'] = $this->cards->getCardsInLocation('hand', $current_player_id);
+
         // Cards played on the table
-        $result['cardsontable'] = $this->cards->getCardsInLocation( 'cardsontable' );
+        $result['cardsontable'] = $this->cards->getCardsInLocation('cardsontable');
+
+        // Drawable Cards
+        $result['drawable'] = $this->cards->getCardsInLocation('draw');
 
         return $result;
     }
@@ -168,6 +170,12 @@ class abluxxen extends Table {
 //////////// Player actions
 //////////// 
 
+    function playCard($cards) {
+        self::checkAction("playCard");
+        $player_id = self::getActivePlayerId();
+        throw new BgaUserException(self::_("Not implemented: ") . "$player_id plays $cards");
+    }
+
     /*
       Each time a player is doing some game action, one of the methods below is called.
       (note: each method below must match an input method in abluxxen.action.php)
@@ -199,7 +207,6 @@ class abluxxen extends Table {
 
      */
 
-
 //////////////////////////////////////////////////////////////////////////////
 //////////// Game state arguments
 ////////////
@@ -230,6 +237,46 @@ class abluxxen extends Table {
 //////////////////////////////////////////////////////////////////////////////
 //////////// Game state actions
 ////////////
+    function stNewHand() {
+        // Take back all cards (from any location => null) to deck
+        //self::setGameStateValue('alreadyPlayedHearts', 0);
+        $this->gamestate->nextState("");
+    }
+
+    function stNewTrick() {
+        // New trick: active the player who wins the last trick, or the player who own the club-2 card
+        // Reset trick color to 0 (= no color)
+        //self::setGameStateInitialValue('trickColor', 0);
+        $this->gamestate->nextState();
+    }
+
+    function stNextPlayer() {
+        // Active next player OR end the trick and go to the next trick OR end the hand
+        if ($this->cards->countCardInLocation('cardsontable') == 4) {
+            // This is the end of the trick
+            // Move all cards to "cardswon" of the given player
+            $best_value_player_id = self::activeNextPlayer(); // TODO figure out winner of trick
+            $this->cards->moveAllCardsInLocation('cardsontable', 'cardswon', null, $best_value_player_id);
+
+            if ($this->cards->countCardInLocation('hand') == 0) {
+                // End of the hand
+                $this->gamestate->nextState("endHand");
+            } else {
+                // End of the trick
+                $this->gamestate->nextState("nextTrick");
+            }
+        } else {
+            // Standard case (not the end of the trick)
+            // => just active the next player
+            $player_id = self::activeNextPlayer();
+            self::giveExtraTime($player_id);
+            $this->gamestate->nextState('nextPlayer');
+        }
+    }
+
+    function stEndHand() {
+        $this->gamestate->nextState("nextHand");
+    }
 
     /*
       Here, you can create methods defined as "game state actions" (see "action" property in states.inc.php).
