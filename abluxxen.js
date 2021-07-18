@@ -49,32 +49,27 @@ define([
                  "gamedatas" argument contains all datas retrieved by your "getAllDatas" PHP method.
                  */
 
-                setup: function (gamedatas)
+                setup: function ()
                 {
                     this.debug("Starting game setup");
 
                     // Player hand
                     this.playerHand = this.createStockForCards(this, $('myhand'));
-
-                    this.debug("PMH", this.playerHand);
-
+                    dojo.connect(this.playerHand, 'onChangeSelection', this, 'onPlayerSelectionChanged');
                     // Cards in player's hand 
-                    this.debug("gamedatas", this.gamedatas);
+//                    this.debug("gamedatas", this.gamedatas);
                     this.recreateHandFromData(this.gamedatas.hand);
+
 
                     // Aviable cards in draw
                     var drawData = this.gamedatas.drawable;
-
                     this.drawableCard = this.createStockForCards(this, $('aviableDraw'));
                     for (var i in drawData) {
                         var card = drawData[i];
-                        this.debug("card", card);
+//                        this.debug("card", card);
                         this.drawableCard.addToStockWithId(card.type, card.id);
                     }
-
-
-
-                    dojo.connect(this.playerHand, 'onChangeSelection', this, 'onPlayerHandSelectionChanged');
+                    dojo.connect(this.drawableCard, 'onChangeSelection', this, 'onPlayerSelectionChanged');
 
                     this.setupNotifications();
 
@@ -260,9 +255,9 @@ define([
 
                 ///////////////////////////////////////////////////
                 //// Player's action
-                onPlayerHandSelectionChanged: function (control_name, item_id) {
+                onPlayerSelectionChanged: function (control_name, item_id) {
                     this.debug(control_name);
-                    this.debug(item_id);
+                    //this.debug(item_id);
 
                     if (this.playerHand.isSelected(item_id)) {
                         var selectedCards = this.playerHand.getSelectedItems();
