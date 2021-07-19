@@ -290,7 +290,7 @@ define([
                                 numbers.push(selectedItems[j].type);
                             }
                         }
-                        this.debug(numbers);
+                        this.debug("onPlayerSelectionChanged | Numbers : ", numbers);
                         if (numbers.length > 1) {
                             var selectedNumber = this.playerHand.items.filter(function (elt) {
                                 return elt.id == itemId
@@ -303,76 +303,8 @@ define([
                             this.selectAllNumberInHand(selectedNumber);
                         }
 
-//                        var otherNumbers = selectedItems.filter(function(elt){
-//                            return elt.type != selectedNumber
-//                        })
-//                        var firstNumber = selectedItems[0].type;
-
-//                        this.debug(otherNumbers);
-//                        this.debug(selectedNumber);
-//                        console.log('___________________');
-
-//                        if (firstNumber !== selectedItems && 14 !== selectedNumber) {
-//                            this.unselectAllNumberInHand(firstNumber);
-//                            this.selectAllNumberInHand(selectedNumber);
-//                        }
                     }
 
-
-
-
-//                    } else if (0 === items.length) {
-//                        this.selectFlag = true;
-//                    }
-
-//                    if (this.selectFlag && 1 === items.length) {
-//                        var selectedNumber = items[0].type;
-//
-//                        for (i = 0; i < this.playerHand.items[i].length; i++) {
-//                            this.debug(this.playerHand.items[i].type, selectedNumber);
-//                            if (this.playerHand.items[i].type === selectedNumber) {
-//                                console.log(items[i].id);
-//                                this.playerHand.selectItem(this.playerHand.items[i].id);
-//                            }
-//                        }
-//                        this.selectFlag = false;
-//                    } else if (0 === items.length) {
-//                        this.selectFlag = true;
-//                    } else {
-//                        if (items[0].type === items[items.length - 1].type) {
-//                            this.debug("OK");
-//                        } else {
-//                            this.debug("KO");
-//                        }
-//
-//                    }
-
-
-                    /*var items = this.playerHand.getSelectedItems();
-                     
-                     if (items.length > 0) {
-                     var action = 'playCard';
-                     if (this.checkAction(action, true)) {
-                     var cards_id = [];//items[0].id;
-                     for (i = 0; i < items.length; i++) {
-                     cards_id.push(items[i].id);
-                     }
-                     console.log(items);
-                     console.log(cards_id.toString());
-                     this.ajaxcall("/" + this.game_name + "/" + this.game_name + "/" + action + ".html", {
-                     id: cards_id.toString(),
-                     lock: true
-                     }, this, function (result) {
-                     }, function (is_error) {
-                     });
-                     
-                     //this.playerHand.unselectAll();
-                     } else if (this.checkAction('giveCards')) {
-                     // Can give cards => let the player select some cards
-                     } else {
-                     //this.playerHand.unselectAll();
-                     }
-                     }*/
                 },
                 /*
                  
