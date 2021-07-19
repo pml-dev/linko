@@ -49,77 +49,111 @@
 
 //    !! It is not a good idea to modify this file when a game is running !!
 
+if (!defined('STATE_END_GAME')) {
+    define("STATE_NEW_TURN", 20);
+    define("STATE_PLAYER_TURN", 21);
+    define("STATE_NEXT_PLAYER", 60);
+
+    define('STATE_BEGIN_GAME', 1);
+    define('STATE_END_GAME', 99);
+}
+
+
 
 $machinestates = array(
-    
     // The initial state. Please do not modify.
-    1 => array(
+    STATE_BEGIN_GAME => array(
         "name" => "gameSetup",
         "description" => clienttranslate("Game setup"),
         "type" => "manager",
         "action" => "stGameSetup",
-        "transitions" => array("" => 20)
+        "transitions" => array("" => STATE_NEW_TURN)
     ),
     /// New hand
-    20 => array(
-        "name" => "newHand",
+    STATE_NEW_TURN => array(
+        "name" => "newTurn",
         "description" => "",
         "type" => "game",
-        "action" => "stNewHand",
+        "action" => "stNewTurn",
         "updateGameProgression" => true,
-        "transitions" => array("" => 30)
+        "transitions" => array("player" => STATE_PLAYER_TURN)
     ),
-    21 => array(
-        "name" => "giveCards",
-        "description" => clienttranslate('Some players must choose 3 cards to give to ${direction}'),
-        "descriptionmyturn" => clienttranslate('${you} must choose 3 cards to give to ${direction}'),
-        "type" => "multipleactiveplayer",
-        "action" => "stGiveCards",
-        "args" => "argGiveCards",
-        "possibleactions" => array("giveCards"),
-        "transitions" => array("giveCards" => 22, "skip" => 22)
-    ),
-    22 => array(
-        "name" => "takeCards",
-        "description" => "",
-        "type" => "game",
-        "action" => "stTakeCards",
-        "transitions" => array("startHand" => 30, "skip" => 30)
-    ),
-    // Trick
-    30 => array(
-        "name" => "newTrick",
-        "description" => "",
-        "type" => "game",
-        "action" => "stNewTrick",
-        "transitions" => array("" => 31)
-    ),
-    31 => array(
+    STATE_PLAYER_TURN => array(
         "name" => "playerTurn",
-        "description" => clienttranslate('${actplayer} must play a card'),
-        "descriptionmyturn" => clienttranslate('${you} must play a card'),
+        "description" => clienttranslate('${actplayer} must play card(s)'),
+        "descriptionmyturn" => clienttranslate('${you} must play card(s)'),
         "type" => "activeplayer",
-        "possibleactions" => array("playCard"),
-        "transitions" => array("playCard" => 32)
+        "possibleactions" => array("playCards"),
+        "transitions" => array("playCards" => STATE_NEXT_PLAYER)
     ),
-    32 => array(
+    
+    STATE_NEXT_PLAYER => array(
         "name" => "nextPlayer",
         "description" => "",
         "type" => "game",
         "action" => "stNextPlayer",
-        "transitions" => array("nextPlayer" => 31, "nextTrick" => 30, "endHand" => 40)
+        "transitions" => array("nextPlayer" => STATE_NEXT_PLAYER, "nextTurn" => STATE_NEW_TURN, "endOfGame" => STATE_END_GAME)
     ),
-    // End of the hand (scoring, etc...)
-    40 => array(
-        "name" => "endHand",
-        "description" => "",
-        "type" => "game",
-        "action" => "stEndHand",
-        "transitions" => array("nextHand" => 20, "endGame" => 99)
-    ),
+//    /// New hand
+//    20 => array(
+//        "name" => "newHand",
+//        "description" => "",
+//        "type" => "game",
+//        "action" => "stNewHand",
+//        "updateGameProgression" => true,
+//        "transitions" => array("" => 30)
+//    ),
+//    21 => array(
+//        "name" => "giveCards",
+//        "description" => clienttranslate('Some players must choose 3 cards to give to ${direction}'),
+//        "descriptionmyturn" => clienttranslate('${you} must choose 3 cards to give to ${direction}'),
+//        "type" => "multipleactiveplayer",
+//        "action" => "stGiveCards",
+//        "args" => "argGiveCards",
+//        "possibleactions" => array("giveCards"),
+//        "transitions" => array("giveCards" => 22, "skip" => 22)
+//    ),
+//    22 => array(
+//        "name" => "takeCards",
+//        "description" => "",
+//        "type" => "game",
+//        "action" => "stTakeCards",
+//        "transitions" => array("startHand" => 30, "skip" => 30)
+//    ),
+//    // Trick
+//    30 => array(
+//        "name" => "newTrick",
+//        "description" => "",
+//        "type" => "game",
+//        "action" => "stNewTrick",
+//        "transitions" => array("" => 31)
+//    ),
+//    31 => array(
+//        "name" => "playerTurn",
+//        "description" => clienttranslate('${actplayer} must play a card'),
+//        "descriptionmyturn" => clienttranslate('${you} must play a card'),
+//        "type" => "activeplayer",
+//        "possibleactions" => array("playCard"),
+//        "transitions" => array("playCard" => 32)
+//    ),
+//    32 => array(
+//        "name" => "nextPlayer",
+//        "description" => "",
+//        "type" => "game",
+//        "action" => "stNextPlayer",
+//        "transitions" => array("nextPlayer" => 31, "nextTrick" => 30, "endHand" => 40)
+//    ),
+//    // End of the hand (scoring, etc...)
+//    40 => array(
+//        "name" => "endHand",
+//        "description" => "",
+//        "type" => "game",
+//        "action" => "stEndHand",
+//        "transitions" => array("nextHand" => 20, "endGame" => 99)
+//    ),
     // Final state.
     // Please do not modify.
-    99 => array(
+    STATE_END_GAME => array(
         "name" => "gameEnd",
         "description" => clienttranslate("End of game"),
         "type" => "manager",

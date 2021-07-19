@@ -34,6 +34,7 @@ define([
                     this.numberOfDifferentNumbers = 14;
 
                     this.DEBUG = true;
+                    this.selectFlag = true;
                 },
 
                 /*
@@ -69,7 +70,7 @@ define([
 //                        this.debug("card", card);
                         this.drawableCard.addToStockWithId(card.type, card.id);
                     }
-                    dojo.connect(this.drawableCard, 'onChangeSelection', this, 'onPlayerSelectionChanged');
+                    //dojo.connect(this.drawableCard, 'onChangeSelection', this, 'onPlayerSelectionChanged');
 
                     this.setupNotifications();
 
@@ -255,16 +256,96 @@ define([
 
                 ///////////////////////////////////////////////////
                 //// Player's action
-                onPlayerSelectionChanged: function (control_name, item_id) {
-                    this.debug(control_name);
-                    //this.debug(item_id);
-
-                    if (this.playerHand.isSelected(item_id)) {
-                        var selectedCards = this.playerHand.getSelectedItems();
-                        this.debug(selectedCards);
-
-
+                selectAllNumberInHand: function (targetNumber) {
+                    var handItems = this.playerHand.items;
+                    for (var i = 0; i < handItems.length; i++) {
+                        if (handItems[i].type === targetNumber) {
+                            this.playerHand.selectItem(handItems[i].id);
+                        }
                     }
+                },
+                unselectAllNumberInHand: function (targetNumber) {
+                    var handItems = this.playerHand.items;
+                    for (var i = 0; i < handItems.length; i++) {
+                        if (handItems[i].type === targetNumber) {
+                            this.playerHand.unselectItem(handItems[i].id);
+                        }
+                    }
+                },
+                onPlayerSelectionChanged: function (controlName, itemId) {
+                    var selectedItems = this.playerHand.getSelectedItems();
+
+                    if (this.selectFlag && 1 === selectedItems.length) {
+                        var selectedNumber = selectedItems[0].type;
+
+                        this.selectAllNumberInHand(selectedNumber);
+
+                        this.selectFlag = false;
+                    } else if (0 === selectedItems.length) {
+                        this.selectFlag = true;
+                    } else {
+                        var numbers = [];
+                        for (var j = 0; j < selectedItems.length; j++) {
+                            if (-1 === numbers.indexOf(selectedItems[j].type) && '14' !== selectedItems[j].type) {
+                                numbers.push(selectedItems[j].type);
+                            }
+                        }
+                        this.debug(numbers);
+                        if (numbers.length > 1) {
+                            var selectedNumber = this.playerHand.items.filter(function (elt) {
+                                return elt.id == itemId
+                            })[0].type;
+                            for (var j = 0; j < selectedItems.length; j++) {
+                                if ('14' !== selectedItems[j].type) {
+                                    this.playerHand.unselectItem(selectedItems[j].id);
+                                }
+                            }
+                            this.selectAllNumberInHand(selectedNumber);
+                        }
+
+//                        var otherNumbers = selectedItems.filter(function(elt){
+//                            return elt.type != selectedNumber
+//                        })
+//                        var firstNumber = selectedItems[0].type;
+
+//                        this.debug(otherNumbers);
+//                        this.debug(selectedNumber);
+//                        console.log('___________________');
+
+//                        if (firstNumber !== selectedItems && 14 !== selectedNumber) {
+//                            this.unselectAllNumberInHand(firstNumber);
+//                            this.selectAllNumberInHand(selectedNumber);
+//                        }
+                    }
+
+
+
+
+//                    } else if (0 === items.length) {
+//                        this.selectFlag = true;
+//                    }
+
+//                    if (this.selectFlag && 1 === items.length) {
+//                        var selectedNumber = items[0].type;
+//
+//                        for (i = 0; i < this.playerHand.items[i].length; i++) {
+//                            this.debug(this.playerHand.items[i].type, selectedNumber);
+//                            if (this.playerHand.items[i].type === selectedNumber) {
+//                                console.log(items[i].id);
+//                                this.playerHand.selectItem(this.playerHand.items[i].id);
+//                            }
+//                        }
+//                        this.selectFlag = false;
+//                    } else if (0 === items.length) {
+//                        this.selectFlag = true;
+//                    } else {
+//                        if (items[0].type === items[items.length - 1].type) {
+//                            this.debug("OK");
+//                        } else {
+//                            this.debug("KO");
+//                        }
+//
+//                    }
 
 
                     /*var items = this.playerHand.getSelectedItems();

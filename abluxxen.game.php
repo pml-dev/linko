@@ -20,7 +20,7 @@ require_once( APP_GAMEMODULE_PATH . 'module/table/table.game.php' );
 
 class abluxxen extends Table {
 
-    CONST TRICK_NUMBER = 10;
+    CONST TURN_NUMBER = 10;
     CONST AVAILABLE_CARD = 6;
     CONST TYPES_OF_NUMBERS = 13;
     CONST NUMBER_OF_NUMBERS = 8;
@@ -37,7 +37,7 @@ class abluxxen extends Table {
 
         parent::__construct();
         self::initGameStateLabels(array(
-            "trickNumber" => self::TRICK_NUMBER,
+            "turnNumber" => self::TURN_NUMBER,
         ));
 
         $this->cards = self::getNew("module.common.deck");
@@ -170,7 +170,7 @@ class abluxxen extends Table {
 //////////// Player actions
 //////////// 
 
-    function playCard($cards) {
+    function playCards($cards) {
         self::checkAction("playCard");
         $player_id = self::getActivePlayerId();
         throw new BgaUserException(self::_("Not implemented: ") . "$player_id plays $cards");
@@ -237,16 +237,8 @@ class abluxxen extends Table {
 //////////////////////////////////////////////////////////////////////////////
 //////////// Game state actions
 ////////////
-    function stNewHand() {
-        // Take back all cards (from any location => null) to deck
-        //self::setGameStateValue('alreadyPlayedHearts', 0);
-        $this->gamestate->nextState("");
-    }
 
-    function stNewTrick() {
-        // New trick: active the player who wins the last trick, or the player who own the club-2 card
-        // Reset trick color to 0 (= no color)
-        //self::setGameStateInitialValue('trickColor', 0);
+    function stNewTurn() {
         $this->gamestate->nextState();
     }
 
