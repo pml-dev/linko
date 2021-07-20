@@ -272,9 +272,17 @@ define([
                         }
                     }
                 },
+                onSelectionReset: function () {
+                    this.playerHand.unselectAll();
+                    this.selectFlag = true;
+                },
                 onPlayerSelectionChanged: function (controlName, itemId) {
                     var selectedItems = this.playerHand.getSelectedItems();
 
+                    this.removeActionButtons();
+                    this.addActionButton('completeSelection_button', _('Play cards'), 'onCompleteSelection', null, false, 'red');
+                    this.addActionButton('unselectSelection_button', _('Reset'), 'onSelectionReset', null, false, 'gray');
+                    //this.addActionButton( 'commit_button', _('Confirm'), 'onConfirm', null, true, 'red'); 
                     if (this.selectFlag && 1 === selectedItems.length) {
                         var selectedNumber = selectedItems[0].type;
 
@@ -304,6 +312,11 @@ define([
                         }
 
                     }
+
+                },
+
+                onCompleteSelection: function () {
+
 
                 },
                 /*
