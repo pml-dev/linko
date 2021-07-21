@@ -170,10 +170,11 @@ class abluxxen extends Table {
 //////////// Player actions
 //////////// 
 
-    function playCards($cards) {
-        self::checkAction("playCard");
+    function playCards($cardsIds) {
+        //var_dump( self::checkAction("playCards",false));die;
+        self::checkAction("playCards");
         $player_id = self::getActivePlayerId();
-        throw new BgaUserException(self::_("Not implemented: ") . "$player_id plays $cards");
+        throw new BgaUserException(self::_("Not implemented: ") . "$player_id plays $cardsIds");
     }
 
     /*
@@ -239,7 +240,7 @@ class abluxxen extends Table {
 ////////////
 
     function stNewTurn() {
-        $this->gamestate->nextState();
+        $this->gamestate->nextState("playerTurn");
     }
 
     function stNextPlayer() {
