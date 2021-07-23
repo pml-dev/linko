@@ -175,7 +175,6 @@ class abluxxen extends Table {
         self::checkAction("playCards");
         $player_id = self::getActivePlayerId();
 
-
         $selectedIds = explode(",", $cardsIds);
         $handCards = $this->cards->getPlayerHand($player_id);
         $selectedCards = array();
@@ -209,7 +208,6 @@ class abluxxen extends Table {
         ));
 
         $this->gamestate->nextState("nextPlayer");
-
     }
 
     /*
@@ -278,16 +276,15 @@ class abluxxen extends Table {
         $player_id = self::activeNextPlayer();
         self::giveExtraTime($player_id);
         $this->gamestate->nextState('playerTurn');
-
-      
     }
 
     function stNextPlayer() {
+        $player_id = self::activeNextPlayer();
+        self::giveExtraTime($player_id);
         $this->gamestate->nextState("nextPlayer");
 
         //tandard case (not the end of the trick)
         // => just active the next player
-        
         // Active next player OR end the trick and go to the next trick OR end the hand
 //        if ($this->cards->countCardInLocation('cardsontable') == 4) {
 //            // This is the end of the trick

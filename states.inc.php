@@ -67,18 +67,18 @@ $machinestates = array(
         "description" => clienttranslate("Game setup"),
         "type" => "manager",
         "action" => "stGameSetup",
-        "transitions" => array("" => STATE_NEW_TURN)
+        "transitions" => array("" => STATE_NEXT_PLAYER)
     ),
     /// New hand
-    STATE_NEW_TURN => array(
-        "name" => "newTurn",
-        "description" => "",
-        "type" => "game",
-        "action" => "stNewTurn",
-        "possibleactions" => array("playCards"),
-        "updateGameProgression" => true,
-        "transitions" => array("player" => STATE_PLAYER_TURN)
-    ),
+//    STATE_NEW_TURN => array(
+//        "name" => "newTurn",
+//        "description" => "",
+//        "type" => "game",
+//        "action" => "stNewTurn",
+//        "possibleactions" => array("playCards"),
+//        "updateGameProgression" => true,
+//        "transitions" => array("player" => STATE_PLAYER_TURN)
+//    ),
     STATE_PLAYER_TURN => array(
         "name" => "playerTurn",
         "description" => clienttranslate('${actplayer} must play card(s)'),
@@ -93,7 +93,7 @@ $machinestates = array(
         "description" => "",
         "type" => "game",
         "action" => "stNextPlayer",
-        "transitions" => array("nextPlayer" => STATE_PLAYER_TURN, "nextTurn" => STATE_NEW_TURN, "endOfGame" => STATE_END_GAME)
+        "transitions" => array("nextPlayer" => STATE_PLAYER_TURN, "endOfGame" => STATE_END_GAME)
     ),
 //    /// New hand
 //    20 => array(
