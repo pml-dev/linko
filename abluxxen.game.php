@@ -183,31 +183,31 @@ class abluxxen extends Table {
         foreach ($handCards as $handCard) {
             if (in_array($handCard['id'], $selectedIds)) {
                 $selectedCards[] = $handCard;
-                if (in_array($handCard['type'], $numbers) && '14' !== $handCard['type']) {
+                if (!in_array($handCard['type'], $numbers) && '14' !== $handCard['type']) {
                     $numbers[] = $handCard['type'];
                 }
             }
         }
 
-        if (sizeof($numbers) > 0 || sizeof($selectedIds) !== sizeof($selectedCards)) {
+
+        if (1 !== sizeof($numbers) || sizeof($selectedIds) !== sizeof($selectedCards)) {
             throw new BgaUserException(self::_("Invalid Selection"));
         }
 
-        $this->cards->moveCards( $selectedCards, "$location", $location_arg = 0 );
-        
+        $this->cards->moveCards($selectedIds, "playertablecard_" . $player_id, 0);
+
         // And notify
-//        self::notifyAllPlayers( 'playCards', clienttranslate('${player_name} a player plays a series of $(count_displayed) cards of value $(value_displayed)'), array(
-//            'i18n' => array(),
-//            'card_ids' => $cardsIds,
-//            'player_id' => $player_id,
-//            'player_name' => self::getActivePlayerName(),
-//            'value' => $numbers[0],
-//            'value_displayed' => $numbers[0],
-//            'count_displayed' => sizeof($selectedCards)
-//        ));
+        self::notifyAllPlayers('playCards', clienttranslate('${player_name} a player plays a series of $(count_displayed) cards of value $(value_displayed)'), array(
+            'i18n' => array(),
+            'card_ids' => $cardsIds,
+            'player_id' => $player_id,
+            'player_name' => self::getActivePlayerName(),
+            'value' => $numbers[0],
+            'value_displayed' => $numbers[0],
+            'count_displayed' => sizeof($selectedCards)
+        ));
 
-
-        throw new BgaUserException(self::_("Not implemented: ") . "$player_id plays $cardsIds");
+        $this->gamestate->nextState("nextPlayer");
     }
 
     /*
@@ -273,36 +273,43 @@ class abluxxen extends Table {
 ////////////
 
     function stNewTurn() {
-        $this->gamestate->nextState();
+        $player_id = self::activeNextPlayer();
+        self::giveExtraTime($player_id);
+        $this->gamestate->nextState('playerTurn');
     }
 
     function stNextPlayer() {
+        $this->gamestate->nextState("nextPlayer");
+
+        //tandard case (not the end of the trick)
+        // => just active the next player
+        
         // Active next player OR end the trick and go to the next trick OR end the hand
-        if ($this->cards->countCardInLocation('cardsontable') == 4) {
-            // This is the end of the trick
-            // Move all cards to "cardswon" of the given player
-            $best_value_player_id = self::activeNextPlayer(); // TODO figure out winner of trick
-            $this->cards->moveAllCardsInLocation('cardsontable', 'cardswon', null, $best_value_player_id);
-
-            if ($this->cards->countCardInLocation('hand') == 0) {
-                // End of the hand
-                $this->gamestate->nextState("endHand");
-            } else {
-                // End of the trick
-                $this->gamestate->nextState("nextTrick");
-            }
-        } else {
-            // Standard case (not the end of the trick)
-            // => just active the next player
-            $player_id = self::activeNextPlayer();
-            self::giveExtraTime($player_id);
-            $this->gamestate->nextState('nextPlayer');
-        }
+//        if ($this->cards->countCardInLocation('cardsontable') == 4) {
+//            // This is the end of the trick
+//            // Move all cards to "cardswon" of the given player
+//            $best_value_player_id = self::activeNextPlayer(); // TODO figure out winner of trick
+//            $this->cards->moveAllCardsInLocation('cardsontable', 'cardswon', null, $best_value_player_id);
+//
+//            if ($this->cards->countCardInLocation('hand') == 0) {
+//                // End of the hand
+//                $this->gamestate->nextState("endHand");
+//            } else {
+//                // End of the trick
+//                $this->gamestate->nextState("nextTrick");
+//            }
+//        } else {
+//            // Standard case (not the end of the trick)
+//            // => just active the next player
+//            $player_id = self::activeNextPlayer();
+//            self::giveExtraTime($player_id);
+//            $this->gamestate->nextState('nextPlayer');
+//        }
     }
 
-    function stEndHand() {
-        $this->gamestate->nextState("nextHand");
-    }
+//    function stEndHand() {
+//        $this->gamestate->nextState("nextHand");
+//    }
 
     /*
       Here, you can create methods defined as "game state actions" (see "action" property in states.inc.php).

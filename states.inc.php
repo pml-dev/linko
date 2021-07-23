@@ -92,7 +92,7 @@ $machinestates = array(
         "description" => "",
         "type" => "game",
         "action" => "stNextPlayer",
-        "transitions" => array("nextPlayer" => STATE_NEXT_PLAYER, "nextTurn" => STATE_NEW_TURN, "endOfGame" => STATE_END_GAME)
+        "transitions" => array("nextPlayer" => STATE_PLAYER_TURN, "nextTurn" => STATE_NEW_TURN, "endOfGame" => STATE_END_GAME)
     ),
 //    /// New hand
 //    20 => array(
