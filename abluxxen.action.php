@@ -39,14 +39,11 @@ class action_abluxxen extends APP_GameAction {
     public function playCards() {
         self::setAjaxMode();
         $cards_id = self::getArg("ids", AT_numberlist, true);
-        
-        //var_dump($cards_id);die;
   
         $this->game->playCards($cards_id);
         self::ajaxResponse();
     }
 
-    
     /*
 
       Example:
