@@ -316,7 +316,23 @@ define([
                 },
 
                 onCompleteSelection: function () {
+                    var selectedCards = this.playerHand.getSelectedItems();
+                    var ids = [];
+                    for (var i = 0; i < selectedCards.length; i++) {
+                        ids.push(selectedCards[i].id);
+                    }
 
+                    this.ajaxcall("/abluxxen/abluxxen/playCards.html", {
+                        lock: true,
+                        ids: ids.toString()
+      
+                    },this, function (result) {
+                        // What to do after the server call if it succeeded
+                        // (most of the time: nothing
+                    }, function (is_error) {
+                        // What to do after the server call in anyway (success or failure)
+                        // (most of the time: nothing)
+                    });
 
                 },
                 /*

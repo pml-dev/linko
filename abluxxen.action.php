@@ -36,16 +36,12 @@ class action_abluxxen extends APP_GameAction {
 
     // TODO: defines your action entry points there
 
-    public function playCard() {
+    public function playCards() {
         self::setAjaxMode();
-        $cards_id = self::getArg("id", AT_numberlist, true);
+        $cards_id = self::getArg("ids", AT_numberlist, true);
   
-        $this->game->playCard($cards_id);
+        $this->game->playCards($cards_id);
         self::ajaxResponse();
-    }
-
-    function argGiveCards() {
-        return array();
     }
 
     /*

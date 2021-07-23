@@ -170,10 +170,44 @@ class abluxxen extends Table {
 //////////// Player actions
 //////////// 
 
-    function playCards($cards) {
-        self::checkAction("playCard");
+    function playCards($cardsIds) {
+        //var_dump( self::checkAction("playCards",false));die;
+        self::checkAction("playCards");
         $player_id = self::getActivePlayerId();
-        throw new BgaUserException(self::_("Not implemented: ") . "$player_id plays $cards");
+
+        $selectedIds = explode(",", $cardsIds);
+        $handCards = $this->cards->getPlayerHand($player_id);
+        $selectedCards = array();
+        $numbers = array();
+
+        foreach ($handCards as $handCard) {
+            if (in_array($handCard['id'], $selectedIds)) {
+                $selectedCards[] = $handCard;
+                if (in_array($handCard['type'], $numbers) && '14' !== $handCard['type']) {
+                    $numbers[] = $handCard['type'];
+                }
+            }
+        }
+
+        if (sizeof($numbers) > 0 || sizeof($selectedIds) !== sizeof($selectedCards)) {
+            throw new BgaUserException(self::_("Invalid Selection"));
+        }
+
+        $this->cards->moveCards( $selectedCards, "$location", $location_arg = 0 );
+        
+        // And notify
+//        self::notifyAllPlayers( 'playCards', clienttranslate('${player_name} a player plays a series of $(count_displayed) cards of value $(value_displayed)'), array(
+//            'i18n' => array(),
+//            'card_ids' => $cardsIds,
+//            'player_id' => $player_id,
+//            'player_name' => self::getActivePlayerName(),
+//            'value' => $numbers[0],
+//            'value_displayed' => $numbers[0],
+//            'count_displayed' => sizeof($selectedCards)
+//        ));
+
+
+        throw new BgaUserException(self::_("Not implemented: ") . "$player_id plays $cardsIds");
     }
 
     /*
