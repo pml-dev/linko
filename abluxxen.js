@@ -185,49 +185,11 @@ define([
                  
                  */
 
-                playCardOnTable: function (player_id, value, card_id) {
-                    // player_id => direction
-                    dojo.place(this.format_block('jstpl_cardontable', {
-                        x: 0,
-                        y: this.cardheight * (value),
-                        player_id: player_id
-                    }), 'playertablecard_' + player_id);
-
-                    if (player_id !== this.player_id) {
-                        // Some opponent played a card
-                        // Move card from player panel
-                        this.placeOnObject('cardontable_' + player_id, 'overall_player_board_' + player_id);
-                    } else {
-                        // You played a card. If it exists in your hand, move card from there and remove
-                        // corresponding item
-
-                        if ($('myhand_item_' + card_id)) {
-                            this.placeOnObject('cardontable_' + player_id, 'myhand_item_' + card_id);
-                            this.playerHand.removeFromStockById(card_id);
-                        }
-                    }
-
-                    // In any case: move it to its final destination
-                    this.slideToObject('cardontable_' + player_id, 'playertablecard_' + player_id).play();
-                },
-
-                setupCard: function (card_div, card_type_id, card_id) {
-//                    this.debug(card_div);
-//                    this.debug(card_type_id);
-//                    this.debug(card_id);
-                },
-
-                recreateHandFromData: function (handData, from) {
-                    for (var i in handData) {
-                        var card = handData[i];
-                        this.playerHand.addToStockWithId(card.type, card.id, from);
-                    }
-                },
 //                playCardOnTable: function (player_id, value, card_id) {
 //                    // player_id => direction
 //                    dojo.place(this.format_block('jstpl_cardontable', {
 //                        x: 0,
-//                        y: this.cardheight * (value ),
+//                        y: this.cardheight * (value),
 //                        player_id: player_id
 //                    }), 'playertablecard_' + player_id);
 //
@@ -248,6 +210,32 @@ define([
 //                    // In any case: move it to its final destination
 //                    this.slideToObject('cardontable_' + player_id, 'playertablecard_' + player_id).play();
 //                },
+
+                setupCard: function (card_div, card_type_id, card_id) {
+//                    this.debug(card_div);
+//                    this.debug(card_type_id);
+//                    this.debug(card_id);
+                },
+
+                recreateHandFromData: function (handData, from) {
+                    for (var i in handData) {
+                        var card = handData[i];
+                        this.playerHand.addToStockWithId(card.type, card.id, from);
+                    }
+                },
+
+                ajaxcallwrapper: function (action, args, handler) {
+                    if (!args) {
+                        args = [];
+                    }
+                    args.lock = true;
+
+                    if (this.checkAction(action)) {
+                        this.ajaxcall("/" + this.game_name + "/" + this.game_name + "/" + action + ".html", args, // 
+                                this, (result) => {
+                        }, handler);
+                    }
+                },
 
                 debug: function () {
                     if (this.DEBUG)
@@ -275,6 +263,7 @@ define([
                 onSelectionReset: function () {
                     this.playerHand.unselectAll();
                     this.selectFlag = true;
+                    this.removeActionButtons();
                 },
                 onPlayerSelectionChanged: function (controlName, itemId) {
                     var selectedItems = this.playerHand.getSelectedItems();
@@ -316,6 +305,7 @@ define([
                 },
 
                 onCompleteSelection: function () {
+
                     var selectedCards = this.playerHand.getSelectedItems();
                     var ids = [];
                     for (var i = 0; i < selectedCards.length; i++) {
@@ -332,6 +322,22 @@ define([
                     }, function (is_error) {
                         // What to do after the server call in anyway (success or failure)
                         // (most of the time: nothing)
+                    });
+
+                    var selectedItems = this.playerHand.getSelectedItems();
+                    var selectedIds = [];
+                    for (var i = 0; i < selectedItems.length; i++) {
+                        selectedIds.push(selectedItems[i].id);
+                    }
+//                    this.ajaxcall("/" + this.game_name + "/" + this.game_name + "/playCards.html"
+//                            this.ajaxcallwrapper('playCards', selectedIds);
+
+                    this.ajaxcall("/" + this.game_name + "/" + this.game_name + "/playCards.html", {
+                        ids: selectedIds.toString()
+                    }, this, function (result) {
+                        //--success
+                    }, function (is_error) {
+                        //--error
                     });
 
                 },

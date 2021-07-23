@@ -175,6 +175,7 @@ class abluxxen extends Table {
         self::checkAction("playCards");
         $player_id = self::getActivePlayerId();
 
+
         $selectedIds = explode(",", $cardsIds);
         $handCards = $this->cards->getPlayerHand($player_id);
         $selectedCards = array();
@@ -208,6 +209,7 @@ class abluxxen extends Table {
         ));
 
         $this->gamestate->nextState("nextPlayer");
+
     }
 
     /*
@@ -276,6 +278,8 @@ class abluxxen extends Table {
         $player_id = self::activeNextPlayer();
         self::giveExtraTime($player_id);
         $this->gamestate->nextState('playerTurn');
+
+      
     }
 
     function stNextPlayer() {
