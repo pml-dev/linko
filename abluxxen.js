@@ -318,8 +318,10 @@ define([
                         lock: true
                     }, this, function (result) {
                         //--success
+                        this.debug("Play :",result);
                     }, function (is_error) {
                         //--error
+                        this.debug("Play fail:",is_error);
                     });
 
                 },
@@ -386,6 +388,9 @@ define([
                     this.debug('notifications subscriptions setup');
 
                     // TODO: here, associate your game notifications with local methods
+                    
+                    dojo.subscribe('playCards',this, "notif_cardsPlayed");
+                    this.notifqueue.setSynchronous( 'playCards', 2500 );
 
                     // Example 1: standard notification handling
                     // dojo.subscribe( 'cardPlayed', this, "notif_cardPlayed" );
@@ -397,6 +402,10 @@ define([
                     // this.notifqueue.setSynchronous( 'cardPlayed', 3000 );
                     // 
                 },
+                
+                notif_cardsPlayed: function(notif){
+                    this.debug(notif);
+                }
 
                 // TODO: from this point and below, you can write your game notifications handling methods
 

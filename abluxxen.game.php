@@ -179,18 +179,21 @@ class abluxxen extends Table {
         $handCards = $this->cards->getPlayerHand($player_id);
         $selectedCards = array();
         $numbers = array();
+        $joker = 0;
 
         foreach ($handCards as $handCard) {
             if (in_array($handCard['id'], $selectedIds)) {
                 $selectedCards[] = $handCard;
-                if (!in_array($handCard['type'], $numbers) && '14' !== $handCard['type']) {
+                if ('14' === $handCard['type']) {
+                    $joker++;
+                } elseif (!in_array($handCard['type'], $numbers)) {
                     $numbers[] = $handCard['type'];
                 }
             }
         }
 
 
-        if (1 !== sizeof($numbers) || sizeof($selectedIds) !== sizeof($selectedCards)) {
+        if ((1 !== sizeof($numbers) && 0 === $joker) || sizeof($selectedIds) !== sizeof($selectedCards)) {
             throw new BgaUserException(self::_("Invalid Selection"));
         }
 
@@ -199,11 +202,11 @@ class abluxxen extends Table {
         // And notify
         self::notifyAllPlayers('playCards', clienttranslate('${player_name} a player plays a series of $(count_displayed) cards of value $(value_displayed)'), array(
             'i18n' => array(),
-            'card_ids' => $cardsIds,
+            'card_ids' => $selectedCards,
             'player_id' => $player_id,
             'player_name' => self::getActivePlayerName(),
-            'value' => $numbers[0],
-            'value_displayed' => $numbers[0],
+            'value' => sizeof($numbers) > 0 ? $numbers[0] : '14',
+            'value_displayed' => sizeof($numbers) > 0 ? $numbers[0] : '14',
             'count_displayed' => sizeof($selectedCards)
         ));
 
