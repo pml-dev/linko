@@ -36,11 +36,24 @@
         </div>
         <div id="playertables">
             <!-- BEGIN player -->
-            <div class="playertable whiteblock playertable_{DIR}">
+            <div class="playertable whiteblock playertable">
                 <div class="playertablename" style="color:#{PLAYER_COLOR}">
                     {PLAYER_NAME}
+                    <div class="collection empty debug"></div>
+                    <div class="collection empty debug"></div>
+                    <div class="collection empty debug"></div>
+                    <div class="collection empty debug"></div>
+                    <div class="collection empty debug"></div>
+                    <div class="collection empty debug"></div>
+                    <div class="collection empty debug"></div>
+                    <div class="collection empty debug"></div>
+                    <div class="collection empty debug"></div>
+                    <div class="collection empty debug"></div>
+                    <div class="collection empty debug"></div>
+                    <div class="collection empty debug"></div>
+                    <div class="collection empty debug"></div>
                 </div>
-                <div class="playertablecard" id="playertablecard_{PLAYER_ID}">
+                <div class="playertablecard" id="playertable_{PLAYER_ID}">
                 </div>
             </div>
             <!-- END player -->
@@ -58,9 +71,10 @@
 
 
 
-<script type="text/javascript">
-    var jstpl_cardontable = '<div class="cardontable" id="cardontable_${player_id}" style="background-position:-${x}px -${y}px">\
+{*<script type="text/javascript">
+    var collectionDom = '<div class="card_collection debug" id="cardontable_${player_id}_${collection} ">+
+                        
                         </div>';
-</script>  
+</script>  *}
 
 {OVERALL_GAME_FOOTER}

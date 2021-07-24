@@ -135,3 +135,10 @@
     height: 134px;
     background-image: url('img/cards.png'); 
 }
+
+.debug{
+    min-height: 30px;
+    min-width: 30px;
+    background: greenyellow;
+    border: 3px black solid;
+}

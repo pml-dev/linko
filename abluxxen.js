@@ -71,6 +71,14 @@ define([
                         this.drawableCard.addToStockWithId(card.type, card.id);
                     }
                     //dojo.connect(this.drawableCard, 'onChangeSelection', this, 'onPlayerSelectionChanged');
+                    this.cardOnTable = []
+                    for (var player in this.gamedatas.players) {
+                        this.debug("p", player);
+                        this.cardOnTable[player.toString()] = this.createStockForCards(this, $('playertable_' + player));
+
+                    }
+
+//                    this.test = this.createStockForCards(this, $('playertable_2351193'));
 
                     this.setupNotifications();
 
@@ -185,58 +193,39 @@ define([
                  
                  */
 
-//                playCardOnTable: function (player_id, value, card_id) {
-//                    // player_id => direction
-//                    dojo.place(this.format_block('jstpl_cardontable', {
-//                        x: 0,
-//                        y: this.cardheight * (value),
-//                        player_id: player_id
-//                    }), 'playertablecard_' + player_id);
-//
-//                    if (player_id !== this.player_id) {
-//                        // Some opponent played a card
-//                        // Move card from player panel
-//                        this.placeOnObject('cardontable_' + player_id, 'overall_player_board_' + player_id);
-//                    } else {
-//                        // You played a card. If it exists in your hand, move card from there and remove
-//                        // corresponding item
-//
-//                        if ($('myhand_item_' + card_id)) {
-//                            this.placeOnObject('cardontable_' + player_id, 'myhand_item_' + card_id);
-//                            this.playerHand.removeFromStockById(card_id);
-//                        }
-//                    }
-//
-//                    // In any case: move it to its final destination
-//                    this.slideToObject('cardontable_' + player_id, 'playertablecard_' + player_id).play();
-//                },
-
                 setupCard: function (card_div, card_type_id, card_id) {
 //                    this.debug(card_div);
 //                    this.debug(card_type_id);
 //                    this.debug(card_id);
                 },
-
+//                moveToAnotherStock: function (item_ids, fromstock, tostock) {
+//                    elt_to_remove = [];
+//                    fromstock.items.forEach(function (element) {
+//                        if (this.inArray(element.id, item_ids)) {
+//                            elt_to_remove.push(element);
+//                        }
+//                    }.bind(this));
+//                    elt_to_remove.forEach(
+//                            function (elt) {
+//                                tostock.addToStockWithId(elt.type, elt.id, fromstock.getItemDivId(elt.id));
+//                                fromstock.removeFromStockById(elt.id);
+//                            }.bind(this)
+//                            );
+//                },
                 recreateHandFromData: function (handData, from) {
                     for (var i in handData) {
                         var card = handData[i];
                         this.playerHand.addToStockWithId(card.type, card.id, from);
                     }
                 },
-
-                ajaxcallwrapper: function (action, args, handler) {
-                    if (!args) {
-                        args = [];
+                inArray: function (needle, haystack) {
+                    var length = haystack.length;
+                    for (var i = 0; i < length; i++) {
+                        if (haystack[i] === needle)
+                            return true;
                     }
-                    args.lock = true;
-
-                    if (this.checkAction(action)) {
-                        this.ajaxcall("/" + this.game_name + "/" + this.game_name + "/" + action + ".html", args, // 
-                                this, (result) => {
-                        }, handler);
-                    }
+                    return false;
                 },
-
                 debug: function () {
                     if (this.DEBUG)
                         console.log.apply(null, arguments);
@@ -303,7 +292,6 @@ define([
                     }
 
                 },
-
                 onCompleteSelection: function () {
                     var selectedItems = this.playerHand.getSelectedItems();
                     var selectedIds = [];
@@ -318,10 +306,10 @@ define([
                         lock: true
                     }, this, function (result) {
                         //--success
-                        this.debug("Play :",result);
+                        this.debug("Play :", result);
                     }, function (is_error) {
                         //--error
-                        this.debug("Play fail:",is_error);
+                        this.debug("Play fail:", is_error);
                     });
 
                 },
@@ -388,9 +376,9 @@ define([
                     this.debug('notifications subscriptions setup');
 
                     // TODO: here, associate your game notifications with local methods
-                    
-                    dojo.subscribe('playCards',this, "notif_cardsPlayed");
-                    this.notifqueue.setSynchronous( 'playCards', 2500 );
+
+                    dojo.subscribe('playCards', this, "notif_cardsPlayed");
+                    this.notifqueue.setSynchronous('playCards', 2500);
 
                     // Example 1: standard notification handling
                     // dojo.subscribe( 'cardPlayed', this, "notif_cardPlayed" );
@@ -402,9 +390,45 @@ define([
                     // this.notifqueue.setSynchronous( 'cardPlayed', 3000 );
                     // 
                 },
-                
-                notif_cardsPlayed: function(notif){
-                    this.debug(notif);
+
+                notif_cardsPlayed: function (notif) {
+                    this.debug("notification CardsPlayed", notif.args);
+
+
+
+//                    dojo.place(this.format_block('collectionDom', {
+//                        player_id: notif.args.player_id,
+//                        collection: 1
+//                    }), 'playertable_' + notif.args.player_id);
+//
+                    if (notif.args.player_id === this.player_id) {
+                        //this.playerHand.moveCards(notif.args.played_cards, 'playertable_' + notif.args.player_id);
+                        var card_id = notif.args.played_cards[0];
+                        this.placeOnObject('myhand_item_' + card_id, 'playertable_' + notif.args.player_id);
+//                        if ($('myhand_item_' + card_id)) {
+//                            /
+//                            
+//                            this.playerHand.removeFromStockById(card_id);
+//                        }
+                        //this.slideToObject('myhand_item_24', 'playertable_' + notif.args.player_id);
+
+//                        var elt =  notif.args.played_cards[0];
+//                        this.cardOnTable[this.player_id].addToStockWithId(elt.type, elt.id, elt.id );
+//                                fromstock.removeFromStockById(elt.id);
+                        //this.moveToAnotherStock(notif.args.played_cards, this.playerHand, 'playertable_' + notif.args.player_id);
+                        //this.lineStocks[lineNumber].addToStockWithId(card.type, card.id, from, specificLocation);
+                        //dojo.query("#playertablecard_"+notif.args.player_id+"_1").addToStockWithId((card.type, card.id, this.playerHand.getItemDivId(card.id)))
+
+//                        this.addNewCollectionToLine(notif.args.player_id, notif.args.played_cards, { stock: 'hand' });
+//                        this.removeFromHand(notif.args.played_cards);
+                    } else {
+                        this.debug("NOT my turn", typeof (notif.args.player_id), typeof (this.player_id));
+////                        var destination = { elt: 'hand_cards_p' + notif.args.player_id };
+////                        this.addCardsToLine(notif.args.line_id, notif.args.played_cards, destination);
+////                        this.tmpRezoom();
+                    }
+//                    addNewCollectionToLine(notifInfos.player_id,cards,)
+//                    
                 }
 
                 // TODO: from this point and below, you can write your game notifications handling methods

@@ -130,8 +130,10 @@ class abluxxen extends Table {
         // Cards in player hand
         $result['hand'] = $this->cards->getCardsInLocation('hand', $current_player_id);
 
-        // Cards played on the table
-        $result['cardsontable'] = $this->cards->getCardsInLocation('cardsontable');
+//        $result["played_cards"] = [];
+//        foreach ($result['players'] as $player) {
+//            $result["played_cards"][$player['player_id']] = $this->cards->getCardsInLocation("playertablecard_".$player['player_id']);
+//        }
 
         // Drawable Cards
         $result['drawable'] = $this->cards->getCardsInLocation('draw');
@@ -196,21 +198,24 @@ class abluxxen extends Table {
         if ((1 !== sizeof($numbers) && 0 === $joker) || sizeof($selectedIds) !== sizeof($selectedCards)) {
             throw new BgaUserException(self::_("Invalid Selection"));
         }
+        //-- [MrK - TODO] Tempory commented for develop notifications
+        $this->cards->moveCards($selectedIds, "playertablecard_" . $player_id, 1);
 
-        $this->cards->moveCards($selectedIds, "playertablecard_" . $player_id, 0);
+        $value = 0 === sizeof($numbers) ? $numbers[sizeof($numbers)] : '14';
 
         // And notify
-        self::notifyAllPlayers('playCards', clienttranslate('${player_name} a player plays a series of $(count_displayed) cards of value $(value_displayed)'), array(
+        self::notifyAllPlayers('playCards', clienttranslate('${player_name} play a serie of $(count_displayed) cards of value $(value_displayed)'), array(
             'i18n' => array(),
-            'card_ids' => $selectedCards,
-            'player_id' => $player_id,
+            'played_cards' => $selectedIds,
+            'player_id' => intval($player_id),
             'player_name' => self::getActivePlayerName(),
-            'value' => sizeof($numbers) > 0 ? $numbers[0] : '14',
-            'value_displayed' => sizeof($numbers) > 0 ? $numbers[0] : '14',
+            'value' => $value,
+            'value_displayed' => $value,
             'count_displayed' => sizeof($selectedCards)
         ));
-
-        $this->gamestate->nextState("nextPlayer");
+        
+        //-- [MrK - TODO] Tempory commented for develop notifications
+        //$this->gamestate->nextState("nextPlayer");
     }
 
     /*
