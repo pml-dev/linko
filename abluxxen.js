@@ -305,25 +305,6 @@ define([
                 },
 
                 onCompleteSelection: function () {
-
-                    var selectedCards = this.playerHand.getSelectedItems();
-                    var ids = [];
-                    for (var i = 0; i < selectedCards.length; i++) {
-                        ids.push(selectedCards[i].id);
-                    }
-
-                    this.ajaxcall("/abluxxen/abluxxen/playCards.html", {
-                        lock: true,
-                        ids: ids.toString()
-      
-                    },this, function (result) {
-                        // What to do after the server call if it succeeded
-                        // (most of the time: nothing
-                    }, function (is_error) {
-                        // What to do after the server call in anyway (success or failure)
-                        // (most of the time: nothing)
-                    });
-
                     var selectedItems = this.playerHand.getSelectedItems();
                     var selectedIds = [];
                     for (var i = 0; i < selectedItems.length; i++) {
@@ -333,7 +314,8 @@ define([
 //                            this.ajaxcallwrapper('playCards', selectedIds);
 
                     this.ajaxcall("/" + this.game_name + "/" + this.game_name + "/playCards.html", {
-                        ids: selectedIds.toString()
+                        ids: selectedIds.toString(),
+                        lock: true
                     }, this, function (result) {
                         //--success
                     }, function (is_error) {
