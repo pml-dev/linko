@@ -393,20 +393,7 @@ define([
 
                 notif_cardsPlayed: function (notif) {
                     this.debug("notification CardsPlayed", notif.args);
-
-
-
-//                    dojo.place(this.format_block('collectionDom', {
-//                        player_id: notif.args.player_id,
-//                        collection: 1
-//                    }), 'playertable_' + notif.args.player_id);
-//
                     if (notif.args.player_id === this.player_id) {
-//                        var elt = notif.args.played_cards[0];
-//                        this.cardOnTable[notif.args.player_id].addToStockWithId(elt.type,elt.id,this.playerHand.getItemDivId(elt.id) );
-//                        this.playerHand.removeFromStockById(elt.id);
-
-
                         for (var i in notif.args.played_cards) {
                             var elt = notif.args.played_cards[i];
                             this.cardOnTable[notif.args.player_id].addToStockWithId(elt.type, elt.id, this.playerHand.getItemDivId(elt.id));
@@ -414,13 +401,12 @@ define([
                         }
 
                     } else {
-                        this.debug("NOT my turn", typeof (notif.args.player_id), typeof (this.player_id));
-////                        var destination = { elt: 'hand_cards_p' + notif.args.player_id };
-////                        this.addCardsToLine(notif.args.line_id, notif.args.played_cards, destination);
-////                        this.tmpRezoom();
-                    }
-//                    addNewCollectionToLine(notifInfos.player_id,cards,)
-//                    
+                        for (var i in notif.args.played_cards) {
+                            var elt = notif.args.played_cards[i];
+                            this.cardOnTable[notif.args.player_id].addToStockWithId(elt.type, elt.id, this.cardOnTable[notif.args.player_id].getItemDivId(elt.id));
+                        }
+
+                    }                   
                 }
 
                 // TODO: from this point and below, you can write your game notifications handling methods
