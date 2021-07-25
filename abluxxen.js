@@ -279,7 +279,7 @@ define([
                         this.debug("onPlayerSelectionChanged | Numbers : ", numbers);
                         if (numbers.length > 1) {
                             var selectedNumber = this.playerHand.items.filter(function (elt) {
-                                return elt.id == itemId
+                                return elt.id === itemId;
                             })[0].type;
                             for (var j = 0; j < selectedItems.length; j++) {
                                 if ('14' !== selectedItems[j].type) {
@@ -402,25 +402,17 @@ define([
 //                    }), 'playertable_' + notif.args.player_id);
 //
                     if (notif.args.player_id === this.player_id) {
-                        //this.playerHand.moveCards(notif.args.played_cards, 'playertable_' + notif.args.player_id);
-                        var card_id = notif.args.played_cards[0];
-                        this.placeOnObject('myhand_item_' + card_id, 'playertable_' + notif.args.player_id);
-//                        if ($('myhand_item_' + card_id)) {
-//                            /
-//                            
-//                            this.playerHand.removeFromStockById(card_id);
-//                        }
-                        //this.slideToObject('myhand_item_24', 'playertable_' + notif.args.player_id);
+//                        var elt = notif.args.played_cards[0];
+//                        this.cardOnTable[notif.args.player_id].addToStockWithId(elt.type,elt.id,this.playerHand.getItemDivId(elt.id) );
+//                        this.playerHand.removeFromStockById(elt.id);
 
-//                        var elt =  notif.args.played_cards[0];
-//                        this.cardOnTable[this.player_id].addToStockWithId(elt.type, elt.id, elt.id );
-//                                fromstock.removeFromStockById(elt.id);
-                        //this.moveToAnotherStock(notif.args.played_cards, this.playerHand, 'playertable_' + notif.args.player_id);
-                        //this.lineStocks[lineNumber].addToStockWithId(card.type, card.id, from, specificLocation);
-                        //dojo.query("#playertablecard_"+notif.args.player_id+"_1").addToStockWithId((card.type, card.id, this.playerHand.getItemDivId(card.id)))
 
-//                        this.addNewCollectionToLine(notif.args.player_id, notif.args.played_cards, { stock: 'hand' });
-//                        this.removeFromHand(notif.args.played_cards);
+                        for (var i in notif.args.played_cards) {
+                            var elt = notif.args.played_cards[i];
+                            this.cardOnTable[notif.args.player_id].addToStockWithId(elt.type, elt.id, this.playerHand.getItemDivId(elt.id));
+                            this.playerHand.removeFromStockById(elt.id);
+                        }
+
                     } else {
                         this.debug("NOT my turn", typeof (notif.args.player_id), typeof (this.player_id));
 ////                        var destination = { elt: 'hand_cards_p' + notif.args.player_id };

@@ -206,7 +206,7 @@ class abluxxen extends Table {
         // And notify
         self::notifyAllPlayers('playCards', clienttranslate('${player_name} play a serie of $(count_displayed) cards of value $(value_displayed)'), array(
             'i18n' => array(),
-            'played_cards' => $selectedIds,
+            'played_cards' => $selectedCards,
             'player_id' => intval($player_id),
             'player_name' => self::getActivePlayerName(),
             'value' => $value,
