@@ -198,7 +198,7 @@ class abluxxen extends Table {
         if ((1 !== sizeof($numbers) && 0 === $joker) || sizeof($selectedIds) !== sizeof($selectedCards)) {
             throw new BgaUserException(self::_("Invalid Selection"));
         }
-        //-- [MrK - TODO] Tempory commented for develop notifications
+
         $this->cards->moveCards($selectedIds, "playertablecard_" . $player_id, 1);
 
         $value = 0 === sizeof($numbers) ? $numbers[sizeof($numbers)] : '14';
@@ -214,8 +214,7 @@ class abluxxen extends Table {
             'count_displayed' => sizeof($selectedCards)
         ));
         
-        //-- [MrK - TODO] Tempory commented for develop notifications
-        //$this->gamestate->nextState("nextPlayer");
+        $this->gamestate->nextState("nextPlayer");
     }
 
     /*
