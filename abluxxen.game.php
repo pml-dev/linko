@@ -27,6 +27,8 @@ class abluxxen extends Table {
     CONST VALUE_OF_JOKERS = 14;
     CONST NUMBER_OF_JOKERS = 5;
 
+    private $activePlayers = array();
+
     function __construct() {
         // Your global variables labels:
         //  Here, you can assign labels to global variables you are using for this game.
@@ -134,7 +136,6 @@ class abluxxen extends Table {
 //        foreach ($result['players'] as $player) {
 //            $result["played_cards"][$player['player_id']] = $this->cards->getCardsInLocation("playertablecard_".$player['player_id']);
 //        }
-
         // Drawable Cards
         $result['drawable'] = $this->cards->getCardsInLocation('draw');
 
@@ -213,8 +214,13 @@ class abluxxen extends Table {
             'value_displayed' => $value,
             'count_displayed' => sizeof($selectedCards)
         ));
-        
-        $this->gamestate->nextState("nextPlayer");
+
+        $remindedCards = $this->cards->getPlayerHand($player_id);
+        if (sizeof($remindedCards) > 0) {
+            $this->gamestate->nextState("nextPlayer");
+        } else {
+            $this->gamestate->nextState("getFinalScores");
+        }
     }
 
     /*
@@ -279,13 +285,13 @@ class abluxxen extends Table {
 //////////// Game state actions
 ////////////
 
-    function stNewTurn() {
+    public function stNewTurn() {
         $player_id = self::activeNextPlayer();
         self::giveExtraTime($player_id);
         $this->gamestate->nextState('playerTurn');
     }
 
-    function stNextPlayer() {
+    public function stNextPlayer() {
         $player_id = self::activeNextPlayer();
         self::giveExtraTime($player_id);
         $this->gamestate->nextState("nextPlayer");
@@ -313,6 +319,40 @@ class abluxxen extends Table {
 //            self::giveExtraTime($player_id);
 //            $this->gamestate->nextState('nextPlayer');
 //        }
+    }
+
+    public function stScoreProcess() {
+        $players = self::loadPlayersBasicInfos();
+        $scores = array();
+        foreach ($players as $player) {
+            $hand = $this->cards->getCardsInLocation('hand', $player['player_id']);
+            $played = $this->cards->getCardsInLocation('playertablecard_' . $player['player_id']);
+            $scores[$player['player_id']] = array(
+                "hand" => sizeof($hand),
+                "onTable" => sizeof($played),
+                "score" => sizeof($played) - sizeof($hand)
+            );
+
+            self::DbQuery("UPDATE player SET player_score=" . (sizeof($played) - sizeof($hand)) . " WHERE player_id='" . $player['player_id'] . "'");
+        }
+        
+        self::notifyAllPlayers('newScores',clienttranslate('${player_name} triggered the end of the game.'),array(
+            "scores" => $scores
+        ));
+
+        $this->gamestate->nextState("End of game");
+
+
+//        $players = $players = self::loadPlayersBasicInfos();
+//        
+//        foreach ($players as $player) {
+//            //var_dump($player);     
+//            $hand = $this->cards->getCardsInLocation('hand', $player['player_id']);
+//            $played = $this->cards->getCardsInLocation('playertablecard_' . $player['player_id']);
+//            $scores['player_id'] = sizeof($played) - sizeof($hand);
+//        }
+//        var_dump($scores, $players);
+//        die;
     }
 
 //    function stEndHand() {

@@ -49,12 +49,13 @@
 
 //    !! It is not a good idea to modify this file when a game is running !!
 
-if (!defined('STATE_END_GAME')) {
+if (!defined("STATE_END_GAME")) {
     define("STATE_NEW_TURN", 20);
     define("STATE_PLAYER_TURN", 21);
     define("STATE_NEXT_PLAYER", 60);
 
-    define('STATE_BEGIN_GAME', 1);
+    define("STATE_BEGIN_GAME", 1);
+    define("STATE_FINAL_SCORE",98);
     define('STATE_END_GAME', 99);
 }
 
@@ -85,15 +86,14 @@ $machinestates = array(
         "descriptionmyturn" => clienttranslate('${you} must play card(s)'),
         "type" => "activeplayer",
         "possibleactions" => array("playCards"),
-        "transitions" => array("nextPlayer" => STATE_NEXT_PLAYER)
+        "transitions" => array("nextPlayer" => STATE_NEXT_PLAYER, "getFinalScores" => STATE_FINAL_SCORE)
     ),
-    
     STATE_NEXT_PLAYER => array(
         "name" => "nextPlayer",
         "description" => "",
         "type" => "game",
         "action" => "stNextPlayer",
-        "transitions" => array("nextPlayer" => STATE_PLAYER_TURN, "endOfGame" => STATE_END_GAME)
+        "transitions" => array("nextPlayer" => STATE_PLAYER_TURN)
     ),
 //    /// New hand
 //    20 => array(
@@ -152,6 +152,13 @@ $machinestates = array(
 //        "action" => "stEndHand",
 //        "transitions" => array("nextHand" => 20, "endGame" => 99)
 //    ),
+   STATE_FINAL_SCORE => array(
+        "name" => "finalScores",
+        "description" => clienttranslate(""),
+        "type" => "manager",
+        "action" => "stScoreProcess",
+        "transitions" => array("End of game" => STATE_END_GAME)
+    ),
     // Final state.
     // Please do not modify.
     STATE_END_GAME => array(
