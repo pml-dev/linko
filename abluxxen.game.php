@@ -78,7 +78,7 @@ class abluxxen extends Table {
         self::DbQuery($sql);
         self::reattributeColorsBasedOnPreferences($players, $gameinfos['player_colors']);
         self::reloadPlayersBasicInfos();
-        
+
         /*         * ********** Start the game initialization **** */
         // Create cards
         $cards = array();
@@ -102,7 +102,7 @@ class abluxxen extends Table {
 
         //Define drawable card
         $this->cards->pickCardsForLocation(self::AVAILABLE_CARD, 'deck', 'draw');
-        
+
         //intialise players stats
         $this->initializeStatistics();
 
@@ -111,12 +111,11 @@ class abluxxen extends Table {
 
         /*         * ********** End of the game initialization **** */
     }
-    
-    private function initializeStatistics()
-    {
+
+    private function initializeStatistics() {
         $all_stats = $this->getStatTypes();
         $player_stats = $all_stats['player'];
-        
+
         foreach ($player_stats as $key => $value) {
             if ($value['id'] >= 10) {
                 $this->initStat('player', $key, 0);
@@ -136,7 +135,7 @@ class abluxxen extends Table {
 
     protected function getAllDatas() {
         $result = array();
-        
+
         $current_player_id = self::getCurrentPlayerId();    // !! We must only return informations visible by this player !!
         // Get information about players
         // Note: you can retrieve some extra field you added for "player" table in "dbmodel.sql" if you need it.
@@ -229,8 +228,13 @@ class abluxxen extends Table {
             'value_displayed' => $value,
             'count_displayed' => sizeof($selectedCards)
         ));
-        
+
         self::incStat(1, "turns_number", $player_id);
+        self::incStat(sizeof($selectedCards), "played_cards", $player_id);
+        $actualMaxCollectionSize = self::getStat("max_length_suit", $player_id);
+        if (sizeof($selectedCards) > $actualMaxCollectionSize) {
+            self::setStat(sizeof($selectedCards), "max_length_suit", $player_id);
+        }
 
         $remindedCards = $this->cards->getPlayerHand($player_id);
         if (sizeof($remindedCards) > 0) {
@@ -341,7 +345,7 @@ class abluxxen extends Table {
     public function stScoreProcess() {
         $players = self::loadPlayersBasicInfos();
         $scores = array();
-        
+
         foreach ($players as $player) {
             $hand = $this->cards->getCardsInLocation('hand', $player['player_id']);
             $played = $this->cards->getCardsInLocation('playertablecard_' . $player['player_id']);
@@ -353,14 +357,13 @@ class abluxxen extends Table {
 
             self::DbQuery("UPDATE player SET player_score=" . (sizeof($played) - sizeof($hand)) . " WHERE player_id='" . $player['player_id'] . "'");
         }
-        
-        self::notifyAllPlayers('newScores',clienttranslate('${player_name} triggered the end of the game.'),array(
+
+        self::notifyAllPlayers('newScores', clienttranslate('${player_name} triggered the end of the game.'), array(
             "player_name" => self::getActivePlayerName(),
             "scores" => $scores
         ));
 
         $this->gamestate->nextState("End of game");
-
 
 //        $players = $players = self::loadPlayersBasicInfos();
 //        
