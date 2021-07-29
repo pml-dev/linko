@@ -305,7 +305,7 @@ define([
                         ids: selectedIds.toString(),
                         lock: true
                     }, this, function (result) {
-                        //--success
+                        this.selectFlag = true;
                         this.debug("Play :", result);
                     }, function (is_error) {
                         //--error
