@@ -52,6 +52,24 @@ class abluxxen extends Table {
     }
 
     /*
+      setupNewGame utility : setupDeck : create a deck for this game
+     */
+    private function setupDeck() {
+        // Create cards
+        $cards = array();
+        for ($number = 1; $number <= self::NUMBER_OF_NUMBERS; ++$number) {
+            $cards[] = array('type' => $number, 'type_arg' => $number + 1, 'nbr' => self::NUMBER_OF_NUMBERS);
+        }
+        $cards[] = array('type' => self::VALUE_OF_JOKERS, 'type_arg' => self::VALUE_OF_JOKERS, 'nbr' => self::NUMBER_OF_JOKERS);
+
+        // Create deck, shuffle it and 
+        $this->cards->createCards($cards, 'deck');
+        $this->cards->moveAllCardsInLocation(null, "deck");
+        $this->cards->shuffle('deck');
+    }
+
+
+    /*
       setupNewGame:
 
       This method is called only once, when a new game is launched.
@@ -80,19 +98,8 @@ class abluxxen extends Table {
         self::reloadPlayersBasicInfos();
 
         /*         * ********** Start the game initialization **** */
-        // Create cards
-        $cards = array();
-        for ($number = 1; $number <= self::NUMBER_OF_NUMBERS; ++$number) {
-            $cards[] = array('type' => $number, 'type_arg' => $number + 1, 'nbr' => self::NUMBER_OF_NUMBERS);
-        }
-        $cards[] = array('type' => self::VALUE_OF_JOKERS, 'type_arg' => self::VALUE_OF_JOKERS, 'nbr' => self::NUMBER_OF_JOKERS);
-
-        $this->cards->createCards($cards, 'deck');
-
-        $this->cards->moveAllCardsInLocation(null, "deck");
-        $this->cards->shuffle('deck');
+        $this->setupDeck();
         // Deal 13 cards to each players
-        // Create deck, shuffle it and give 13 initial cards
 //        $players = self::loadPlayersBasicInfos();
         foreach ($players as $player_id => $player) {
             $cards = $this->cards->pickCards(13, 'deck', $player_id);
