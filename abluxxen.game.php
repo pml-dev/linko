@@ -54,6 +54,7 @@ class abluxxen extends Table {
     /*
       setupNewGame utility : setupDeck : create a deck for this game
      */
+
     private function setupDeck() {
         // Create cards
         $cards = array();
@@ -67,7 +68,6 @@ class abluxxen extends Table {
         $this->cards->moveAllCardsInLocation(null, "deck");
         $this->cards->shuffle('deck');
     }
-
 
     /*
       setupNewGame:
@@ -193,18 +193,13 @@ class abluxxen extends Table {
 //////////////////////////////////////////////////////////////////////////////
 //////////// Player actions
 //////////// 
-
-    function playCards($cardsIds) {
-        //var_dump( self::checkAction("playCards",false));die;
-        self::checkAction("playCards");
-        $player_id = self::getActivePlayerId();
-
+    // utility for playCards Action
+    private function getPlayedCardsInfos($cardsIds, $playerId) {
         $selectedIds = explode(",", $cardsIds);
-        $handCards = $this->cards->getPlayerHand($player_id);
+        $handCards = $this->cards->getPlayerHand($playerId);
         $selectedCards = array();
         $numbers = array();
         $joker = 0;
-
         foreach ($handCards as $handCard) {
             if (in_array($handCard['id'], $selectedIds)) {
                 $selectedCards[] = $handCard;
@@ -215,32 +210,45 @@ class abluxxen extends Table {
                 }
             }
         }
-
-
         if ((1 !== sizeof($numbers) && 0 === $joker) || sizeof($selectedIds) !== sizeof($selectedCards)) {
             throw new BgaUserException(self::_("Invalid Selection"));
         }
-
-        $this->cards->moveCards($selectedIds, "playertablecard_" . $player_id, 1);
-
         $value = 0 === sizeof($numbers) ? $numbers[sizeof($numbers)] : '14';
+
+        return array(
+            "numbers" => $numbers,
+            "joker" => $joker,
+            "selectedIds" => $selectedIds,
+            "selectedCards" => $selectedCards,
+            "value" => $value
+        );
+    }
+
+    public function playCards($cardsIds) {
+        //var_dump( self::checkAction("playCards",false));die;
+        self::checkAction("playCards");
+        $player_id = self::getActivePlayerId();
+
+        $actionInfos = $this->getPlayedCardsInfos($cardsIds, $player_id);
+
+        $this->cards->moveCards($actionInfos['selectedIds'], "playertablecard_" . $player_id, 1);
 
         // And notify
         self::notifyAllPlayers('playCards', clienttranslate('${player_name} play a serie of $(count_displayed) cards of value $(value_displayed)'), array(
             'i18n' => array(),
-            'played_cards' => $selectedCards,
+            'played_cards' => $actionInfos['selectedCards'],
             'player_id' => intval($player_id),
             'player_name' => self::getActivePlayerName(),
-            'value' => $value,
-            'value_displayed' => $value,
-            'count_displayed' => sizeof($selectedCards)
+            'value' => $actionInfos['value'],
+            'value_displayed' => $actionInfos['value'],
+            'count_displayed' => sizeof($actionInfos['selectedCards'])
         ));
 
         self::incStat(1, "turns_number", $player_id);
-        self::incStat(sizeof($selectedCards), "played_cards", $player_id);
+        self::incStat(sizeof($actionInfos['selectedCards']), "played_cards", $player_id);
         $actualMaxCollectionSize = self::getStat("max_length_suit", $player_id);
-        if (sizeof($selectedCards) > $actualMaxCollectionSize) {
-            self::setStat(sizeof($selectedCards), "max_length_suit", $player_id);
+        if (sizeof($actionInfos['selectedCards']) > $actualMaxCollectionSize) {
+            self::setStat(sizeof($actionInfos['selectedCards']), "max_length_suit", $player_id);
         }
 
         $remindedCards = $this->cards->getPlayerHand($player_id);
