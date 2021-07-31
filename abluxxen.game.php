@@ -27,8 +27,6 @@ class abluxxen extends Table {
     CONST VALUE_OF_JOKERS = 14;
     CONST NUMBER_OF_JOKERS = 5;
 
-    private $activePlayers = array();
-
     function __construct() {
         // Your global variables labels:
         //  Here, you can assign labels to global variables you are using for this game.
@@ -193,7 +191,7 @@ class abluxxen extends Table {
 //////////////////////////////////////////////////////////////////////////////
 //////////// Player actions
 //////////// 
-    // utility for playCards Action
+    // utility for playCards Action : Retrive Cards Infos
     private function getPlayedCardsInfos($cardsIds, $playerId) {
         $selectedIds = explode(",", $cardsIds);
         $handCards = $this->cards->getPlayerHand($playerId);
@@ -224,6 +222,19 @@ class abluxxen extends Table {
         );
     }
 
+    // utility for playCards Action : Update Player Stats after play action
+    private function updPlayStats($actionInfos, $player_id) {
+        self::incStat(1, "turns_number", $player_id);
+        self::incStat(1, "sequence_count", $player_id);
+        self::incStat($actionInfos['joker'], "joker_played", $player_id);
+        self::incStat(sizeof($actionInfos['selectedCards']), "played_cards", $player_id);
+        //-- Check max sequence length and update if needed
+        $actualMaxCollectionSize = self::getStat("max_length_sequence", $player_id);
+        if (sizeof($actionInfos['selectedCards']) > $actualMaxCollectionSize) {
+            self::setStat(sizeof($actionInfos['selectedCards']), "max_length_sequence", $player_id);
+        }
+    }
+
     public function playCards($cardsIds) {
         //var_dump( self::checkAction("playCards",false));die;
         self::checkAction("playCards");
@@ -231,7 +242,11 @@ class abluxxen extends Table {
 
         $actionInfos = $this->getPlayedCardsInfos($cardsIds, $player_id);
 
-        $this->cards->moveCards($actionInfos['selectedIds'], "playertablecard_" . $player_id, 1);
+        $posArg = self::getStat("sequence_count", $player_id);
+        $this->cards->moveCards($actionInfos['selectedIds'], "playertablecard_" . $player_id, $posArg + 1);
+
+        //-- Update stats
+        $this->updPlayStats($actionInfos, $player_id);
 
         // And notify
         self::notifyAllPlayers('playCards', clienttranslate('${player_name} play a serie of $(count_displayed) cards of value $(value_displayed)'), array(
@@ -243,13 +258,6 @@ class abluxxen extends Table {
             'value_displayed' => $actionInfos['value'],
             'count_displayed' => sizeof($actionInfos['selectedCards'])
         ));
-
-        self::incStat(1, "turns_number", $player_id);
-        self::incStat(sizeof($actionInfos['selectedCards']), "played_cards", $player_id);
-        $actualMaxCollectionSize = self::getStat("max_length_suit", $player_id);
-        if (sizeof($actionInfos['selectedCards']) > $actualMaxCollectionSize) {
-            self::setStat(sizeof($actionInfos['selectedCards']), "max_length_suit", $player_id);
-        }
 
         $remindedCards = $this->cards->getPlayerHand($player_id);
         if (sizeof($remindedCards) > 0) {

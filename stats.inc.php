@@ -75,13 +75,23 @@ $stats_type = array(
             "name" => totranslate("Number of played cards"),
             "type" => "int"
         ),
-        "max_length_suit" => array(
-            "id" => 12,
+        "max_length_sequence" => array(
+            "id" => 20,
             "name" => totranslate("Maximum length of number sequence"),
             "type" => "int"
         ),
+        "joker_played" => array(
+            "id" => 21,
+            "name" => totranslate("Number of jokers played"),
+            "type" => "int"
+        ),
+        "sequence_count" => array(
+            "id" => 30,
+            "name" => totranslate("Number of remaining sequences"),
+            "type" => "int"
+        ),
         "drawn_card" => array(
-            "id" => 20,
+            "id" => 40,
             "name" => totranslate("Number of drawn cards"),
             "type" => "int"
         )
