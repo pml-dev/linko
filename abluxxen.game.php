@@ -151,12 +151,27 @@ class abluxxen extends Table {
         // Cards in player hand
         $result['hand'] = $this->cards->getCardsInLocation('hand', $current_player_id);
 
-//        $result["played_cards"] = [];
-//        foreach ($result['players'] as $player) {
-//            $result["played_cards"][$player['player_id']] = $this->cards->getCardsInLocation("playertablecard_".$player['player_id']);
-//        }
+        foreach ($result['players'] as $player) {
+            $result['ontable'][$player['id']] = $this->getPlayedCollection($player['id']);
+        }
+
         // Drawable Cards
         $result['drawable'] = $this->cards->getCardsInLocation('draw');
+
+        return $result;
+    }
+
+    /**
+     *      getAllDatas: utility :
+     *      rebuid the played collection of a given player
+     */
+    private function getPlayedCollection($playerId) {
+        $result = array();
+        $raw = $this->cards->getCardsInLocation("playertablecard_" . $playerId);
+
+        foreach ($raw as $playedCard) {
+            $result[$playedCard['location_arg']][] = $playedCard;
+        }
 
         return $result;
     }

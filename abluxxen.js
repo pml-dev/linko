@@ -61,7 +61,6 @@ define([
 //                    this.debug("gamedatas", this.gamedatas);
                     this.recreateHandFromData(this.gamedatas.hand);
 
-
                     // Aviable cards in draw
                     var drawData = this.gamedatas.drawable;
                     this.drawableCard = this.createStockForCards(this, $('aviableDraw'));
@@ -71,10 +70,22 @@ define([
                         this.drawableCard.addToStockWithId(card.type, card.id);
                     }
                     //dojo.connect(this.drawableCard, 'onChangeSelection', this, 'onPlayerSelectionChanged');
-                    this.cardOnTable = []
+                    this.cardOnTable = [];
                     for (var player in this.gamedatas.players) {
-                        this.debug("p", player);
+//                        this.debug("p", player);
+                        this.debug('Played for ' + player.toString() + "|", this.gamedatas.ontable[player.toString()]);
                         this.cardOnTable[player.toString()] = this.createStockForCards(this, $('playertable_' + player));
+
+                        var collections = this.gamedatas.ontable[player.toString()];
+                        for (var j in collections) {
+                            var cards = collections[j];
+                            for (var k in cards){
+                                this.cardOnTable[player.toString()].addToStockWithId(cards[k].type, cards[k].id, this.cardOnTable[player.toString()].getItemDivId(cards[k].id));
+                            }
+                            
+                        }
+                        //this.cardOnTable[notif.args.player_id].addToStockWithId(elt.type, elt.id, this.cardOnTable[notif.args.player_id].getItemDivId(elt.id));
+
 
                     }
 
@@ -298,6 +309,8 @@ define([
                     for (var i = 0; i < selectedItems.length; i++) {
                         selectedIds.push(selectedItems[i].id);
                     }
+
+                    this.selectFlag = true;
 //                    this.ajaxcall("/" + this.game_name + "/" + this.game_name + "/playCards.html"
 //                            this.ajaxcallwrapper('playCards', selectedIds);
 
@@ -305,7 +318,6 @@ define([
                         ids: selectedIds.toString(),
                         lock: true
                     }, this, function (result) {
-                        this.selectFlag = true;
                         this.debug("Play :", result);
                     }, function (is_error) {
                         //--error
@@ -406,7 +418,7 @@ define([
                             this.cardOnTable[notif.args.player_id].addToStockWithId(elt.type, elt.id, this.cardOnTable[notif.args.player_id].getItemDivId(elt.id));
                         }
 
-                    }                   
+                    }
                 }
 
                 // TODO: from this point and below, you can write your game notifications handling methods

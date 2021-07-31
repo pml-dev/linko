@@ -59,7 +59,7 @@
 
 
 <script type="text/javascript">
-    var jstpl_card = '<div class="ntx-card collection-${number}" id="collection-${player}-${number}" style="background-position:-${x}% -${y}%;z-index:${z}"></div>';
+    //var jstpl_card = '<div class="ntx-card collection-${number}" id="collection-${player}-${number}" style="background-position:-${x}% -${y}%;z-index:${z}"></div>';
 </script>  
 
 {OVERALL_GAME_FOOTER}
