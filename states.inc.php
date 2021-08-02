@@ -52,10 +52,11 @@
 if (!defined("STATE_END_GAME")) {
     define("STATE_NEW_TURN", 20);
     define("STATE_PLAYER_TURN", 21);
+    define("STATE_TAKE_COLLECTION", 30);
     define("STATE_NEXT_PLAYER", 60);
 
     define("STATE_BEGIN_GAME", 1);
-    define("STATE_FINAL_SCORE",98);
+    define("STATE_FINAL_SCORE", 98);
     define('STATE_END_GAME', 99);
 }
 
@@ -86,7 +87,7 @@ $machinestates = array(
         "descriptionmyturn" => clienttranslate('${you} must play card(s)'),
         "type" => "activeplayer",
         "possibleactions" => array("playCards"),
-        "transitions" => array("nextPlayer" => STATE_NEXT_PLAYER, "getFinalScores" => STATE_FINAL_SCORE)
+        "transitions" => array("nextPlayer" => STATE_NEXT_PLAYER, "takeCollection" => STATE_TAKE_COLLECTION, "getFinalScores" => STATE_FINAL_SCORE)
     ),
     STATE_NEXT_PLAYER => array(
         "name" => "nextPlayer",
@@ -94,6 +95,14 @@ $machinestates = array(
         "type" => "game",
         "action" => "stNextPlayer",
         "transitions" => array("nextPlayer" => STATE_PLAYER_TURN)
+    ),
+    STATE_TAKE_COLLECTION => array(
+        "name" => "takeCollection",
+        "description" => clienttranslate('${actplayer} can take collection'),
+        "descriptionmyturn" => clienttranslate('${you} can take collection'),
+        "type" => "activeplayer",
+        "possibleactions" => array("takeCollection", "drawCollection"),
+        "transitions" => array("nextPlayer" => STATE_PLAYER_TURN, "takeCollection" => STATE_TAKE_COLLECTION)
     ),
 //    /// New hand
 //    20 => array(
@@ -152,7 +161,7 @@ $machinestates = array(
 //        "action" => "stEndHand",
 //        "transitions" => array("nextHand" => 20, "endGame" => 99)
 //    ),
-   STATE_FINAL_SCORE => array(
+    STATE_FINAL_SCORE => array(
         "name" => "finalScores",
         "description" => clienttranslate(""),
         "type" => "manager",

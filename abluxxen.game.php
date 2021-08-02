@@ -27,6 +27,8 @@ class abluxxen extends Table {
     CONST VALUE_OF_JOKERS = 14;
     CONST NUMBER_OF_JOKERS = 5;
 
+    private $takeableCollection = array();
+
     function __construct() {
         // Your global variables labels:
         //  Here, you can assign labels to global variables you are using for this game.
@@ -229,8 +231,8 @@ class abluxxen extends Table {
         $value = 0 === sizeof($numbers) ? $numbers[sizeof($numbers)] : '14';
 
         return array(
-            "numbers" => $numbers,
-            "joker" => $joker,
+//            "numbers" => $numbers,
+//            "joker" => $joker,
             "selectedIds" => $selectedIds,
             "selectedCards" => $selectedCards,
             "value" => $value
@@ -238,16 +240,35 @@ class abluxxen extends Table {
     }
 
     // utility for playCards Action : Update Player Stats after play action
-    private function updPlayStats($actionInfos, $player_id) {
-        self::incStat(1, "turns_number", $player_id);
-        self::incStat(1, "sequence_count", $player_id);
-        self::incStat($actionInfos['joker'], "joker_played", $player_id);
-        self::incStat(sizeof($actionInfos['selectedCards']), "played_cards", $player_id);
+    private function updPlayStats($actionInfos, $playerId) {
+        self::incStat(1, "turns_number", $playerId);
+        self::incStat(1, "sequence_count", $playerId);
+        self::incStat($actionInfos['joker'], "joker_played", $playerId);
+        self::incStat(sizeof($actionInfos['selectedCards']), "played_cards", $playerId);
         //-- Check max sequence length and update if needed
-        $actualMaxCollectionSize = self::getStat("max_length_sequence", $player_id);
+        $actualMaxCollectionSize = self::getStat("max_length_sequence", $playerId);
         if (sizeof($actionInfos['selectedCards']) > $actualMaxCollectionSize) {
-            self::setStat(sizeof($actionInfos['selectedCards']), "max_length_sequence", $player_id);
+            self::setStat(sizeof($actionInfos['selectedCards']), "max_length_sequence", $playerId);
         }
+    }
+
+    private function getTakeableCollections($actionInfos, $playerId) {
+        $players = self::loadPlayersBasicInfos();
+        $result = array();
+
+        foreach ($players as $player) {
+            $collections = $this->getPlayedCollection($player['player_id']);
+            if ($playerId !== $player['player_id'] && sizeof($collections) > 0) {
+                $lastCollectionCard = $collections[sizeof($collections)][0];
+                $lastCollectionLength = sizeof($collections[sizeof($collections)]);
+
+                if (sizeof($actionInfos['selectedCards'] === $lastCollectionLength && $lastCollectionCard['type'] < $actionInfos['value'])) {
+                    $result[$player['player_id']] = $collections[sizeof($collections)];
+                }
+            }
+        }
+
+        return $result;
     }
 
     public function playCards($cardsIds) {
@@ -274,8 +295,11 @@ class abluxxen extends Table {
             'count_displayed' => sizeof($actionInfos['selectedCards'])
         ));
 
+        $this->takeableCollection = $this->getTakeableCollections($actionInfos, $player_id);
         $remindedCards = $this->cards->getPlayerHand($player_id);
-        if (sizeof($remindedCards) > 0) {
+        if (sizeof($this->takeableCollection)) {
+            $this->gamestate->nextState("takeCollection");
+        } elseif (sizeof($remindedCards) > 0) {
             $this->gamestate->nextState("nextPlayer");
         } else {
             $this->gamestate->nextState("getFinalScores");
