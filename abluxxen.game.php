@@ -271,6 +271,7 @@ class abluxxen extends Table {
             'player_name' => self::getActivePlayerName(),
             'value' => $actionInfos['value'],
             'value_displayed' => $actionInfos['value'],
+            'collection_count' => self::getStat("sequence_count", $player_id),
             'count_displayed' => sizeof($actionInfos['selectedCards'])
         ));
 

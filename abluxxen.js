@@ -79,10 +79,10 @@ define([
                         var collections = this.gamedatas.ontable[player.toString()];
                         for (var j in collections) {
                             var cards = collections[j];
-                            for (var k in cards){
+                            for (var k in cards) {
                                 this.cardOnTable[player.toString()].addToStockWithId(cards[k].type, cards[k].id, this.cardOnTable[player.toString()].getItemDivId(cards[k].id));
                             }
-                            
+
                         }
                         //this.cardOnTable[notif.args.player_id].addToStockWithId(elt.type, elt.id, this.cardOnTable[notif.args.player_id].getItemDivId(elt.id));
 
@@ -404,21 +404,64 @@ define([
                 },
 
                 notif_cardsPlayed: function (notif) {
-                    this.debug("notification CardsPlayed", notif.args);
+                    this.debug("notification CardsPlayed | ", notif.args);
+
+                    dojo.place(this.format_block('jstpl_collection', {
+                        playerId: notif.args.player_id,
+                        countColl: notif.args.collection_count
+                    }), 'playertable2_' + notif.args.player_id);
+
                     if (notif.args.player_id === this.player_id) {
+                        var collection = 'collection-' + notif.args.player_id + '-' + notif.args.collection_count;
                         for (var i in notif.args.played_cards) {
-                            var elt = notif.args.played_cards[i];
-                            this.cardOnTable[notif.args.player_id].addToStockWithId(elt.type, elt.id, this.playerHand.getItemDivId(elt.id));
-                            this.playerHand.removeFromStockById(elt.id);
+                            var card = notif.args.played_cards[i];
+                            var from = 'myhand_item_' + card.id;
+
+                            this.placeOnObject(collection, from);
+                            this.playerHand.removeFromStockById(card.id);
                         }
 
-                    } else {
-                        for (var i in notif.args.played_cards) {
-                            var elt = notif.args.played_cards[i];
-                            this.cardOnTable[notif.args.player_id].addToStockWithId(elt.type, elt.id, this.cardOnTable[notif.args.player_id].getItemDivId(elt.id));
-                        }
-
+                        this.slideToObject(collection, 'playertable2_' + notif.args.player_id).play();
                     }
+
+
+
+//                    
+//                    if (notif.args.player_id === this.player_id) {
+//                        var destination = '';
+//
+//                        for (var i in notif.args.played_cards) {
+//                            var card = notif.args.played_cards[i];
+//                            var from = 'myhand_item_' + card.id;
+//                            destination = 'collection-' + notif.args.player_id + '-' + notif.args.collection_count;
+////                            this.debug('COT', $('collection-' + notif.args.player_id + '-' + notif.args.collection_count));
+////                            this.debug('MYH', $('myhand_item_' + card.id));
+//                            this.placeOnObject(destination, from);
+//                            this.playerHand.removeFromStockById(card.id);
+//                            this.slideToObject(destination, 'playertable_' + notif.args.player_id, ).play();
+//                        }
+//                    } else {
+////                        for (var i in notif.args.played_cards) {
+////                            var card = notif.args.played_cards[i];
+////                            this.placeOnObject('cardontable_' + notif.args.player_id, 'overall_player_board_' + notif.args.player_id);
+////                        }
+//                    }
+
+
+//                    if (notif.args.player_id === this.player_id) {
+//                        for (var i in notif.args.played_cards) {
+//                            var elt = notif.args.played_cards[i];
+//                            this.cardOnTable[notif.args.player_id].addToStockWithId(elt.type, elt.id, this.playerHand.getItemDivId(elt.id));
+//                            this.playerHand.removeFromStockById(elt.id);
+//                        }
+//
+//                    } else {
+//                        for (var i in notif.args.played_cards) {
+//                            var elt = notif.args.played_cards[i];
+//                            this.cardOnTable[notif.args.player_id].addToStockWithId(elt.type, elt.id, this.cardOnTable[notif.args.player_id].getItemDivId(elt.id));
+//                        }
+//
+//                    }
                 }
 
                 // TODO: from this point and below, you can write your game notifications handling methods

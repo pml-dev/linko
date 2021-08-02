@@ -42,6 +42,8 @@
                 </div>
                 <div class="playertablecard" id="playertable_{PLAYER_ID}">
                 </div>
+                <div class="playertablecard" id="playertable2_{PLAYER_ID}">
+                </div>
             </div>
             <!-- END player -->
             <div id="myhand_wrap" class="whiteblock">
@@ -59,7 +61,8 @@
 
 
 <script type="text/javascript">
-    //var jstpl_card = '<div class="ntx-card collection-${number}" id="collection-${player}-${number}" style="background-position:-${x}% -${y}%;z-index:${z}"></div>';
+      var jstpl_collection = '<div class="ntx-collection debug collection-${countColl}" id="collection-${playerId}-${countColl}" style="z-index:${countColl};"></div>';
+
 </script>  
 
 {OVERALL_GAME_FOOTER}
