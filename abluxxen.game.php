@@ -232,7 +232,7 @@ class abluxxen extends Table {
 
         return array(
 //            "numbers" => $numbers,
-//            "joker" => $joker,
+            "joker" => $joker,
             "selectedIds" => $selectedIds,
             "selectedCards" => $selectedCards,
             "value" => $value
@@ -262,7 +262,7 @@ class abluxxen extends Table {
                 $lastCollectionCard = $collections[sizeof($collections)][0];
                 $lastCollectionLength = sizeof($collections[sizeof($collections)]);
 
-                if (sizeof($actionInfos['selectedCards'] === $lastCollectionLength && $lastCollectionCard['type'] < $actionInfos['value'])) {
+                if (sizeof($actionInfos['selectedCards']) === $lastCollectionLength && $lastCollectionCard['type'] < $actionInfos['value']) {
                     $result[$player['player_id']] = $collections[sizeof($collections)];
                 }
             }

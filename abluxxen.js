@@ -75,15 +75,16 @@ define([
 //                        this.debug("p", player);
                         this.debug('Played for ' + player.toString() + "|", this.gamedatas.ontable[player.toString()]);
                         this.cardOnTable[player.toString()] = this.createStockForCards(this, $('playertable_' + player));
-
+                        this.cardOnTable[player.toString()].setSelectionMode(0);
                         var collections = this.gamedatas.ontable[player.toString()];
                         for (var j in collections) {
                             var cards = collections[j];
-                            for (var k in cards){
+                            for (var k in cards) {
                                 this.cardOnTable[player.toString()].addToStockWithId(cards[k].type, cards[k].id, this.cardOnTable[player.toString()].getItemDivId(cards[k].id));
                             }
-                            
+
                         }
+
                         //this.cardOnTable[notif.args.player_id].addToStockWithId(elt.type, elt.id, this.cardOnTable[notif.args.player_id].getItemDivId(elt.id));
 
 
@@ -106,18 +107,37 @@ define([
                 {
                     this.debug('Entering state: ' + stateName);
 
+                    
+                    // Hand & draw cards not selectable
+                    this.playerHand.setSelectionMode(0);
+                    this.drawableCard.setSelectionMode(0);
+
+//                    
+//                    this.addActionButton('completeSelection_button', _('Play cards'), 'onCompleteSelection', null, false, 'red');
+//                    this.addActionButton('unselectSelection_button', _('Reset'), 'onSelectionReset', null, false, 'gray');
+
                     switch (stateName)
                     {
 
-                        /* Example:
-                         
-                         case 'myGameState':
-                         
-                         // Show some HTML block at this game state
-                         dojo.style( 'my_html_block_id', 'display', 'block' );
-                         
-                         break;
-                         */
+                        case 'playerTurn':
+                            if (this.isCurrentPlayerActive()) {
+                                // Hand cards are selectable
+                                this.addActionButton('completeSelection_button', _('Play cards'), 'onCompleteSelection', null, false, 'red');
+                                this.addActionButton('unselectSelection_button', _('Reset'), 'onSelectionReset', null, false, 'gray');
+                                this.playerHand.setSelectionMode(2);
+                            }
+                            break;
+
+
+                            /* Example:
+                             
+                             case 'myGameState':
+                             
+                             // Show some HTML block at this game state
+                             dojo.style( 'my_html_block_id', 'display', 'block' );
+                             
+                             break;
+                             */
 
 
                         case 'dummmy':
@@ -132,6 +152,8 @@ define([
                 {
                     this.debug('Leaving state: ' + stateName);
 
+                    this.removeActionButtons();
+                    
                     switch (stateName)
                     {
 
@@ -268,9 +290,6 @@ define([
                 onPlayerSelectionChanged: function (controlName, itemId) {
                     var selectedItems = this.playerHand.getSelectedItems();
 
-                    this.removeActionButtons();
-                    this.addActionButton('completeSelection_button', _('Play cards'), 'onCompleteSelection', null, false, 'red');
-                    this.addActionButton('unselectSelection_button', _('Reset'), 'onSelectionReset', null, false, 'gray');
                     //this.addActionButton( 'commit_button', _('Confirm'), 'onConfirm', null, true, 'red'); 
                     if (this.selectFlag && 1 === selectedItems.length) {
                         var selectedNumber = selectedItems[0].type;
